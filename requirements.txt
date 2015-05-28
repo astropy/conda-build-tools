@@ -1,0 +1,17 @@
+astroquery==0.2.4
+sncosmo==1.0.0
+pydl==0.3.0
+montage-wrapper==0.9.8
+ccdproc==0.3.1
+wcsaxes==0.3
+gammapy==0.2
+pyvo==0.0beta2
+photutils==0.1
+spherical-geometry==1.0.4
+APLpy==1.0
+specutils==0.1
+imexam==0.5
+gwcs==0.1.dev44
+pyregion==1.1.4
+astroML==0.2
+ginga==2.3.20150517013817
