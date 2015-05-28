@@ -4,12 +4,15 @@ from __future__ import (division, print_function, absolute_import,
 from argparse import ArgumentParser
 import os
 import re
-import xmlrpclib
+import hashlib
 
 from binstar_client.scripts import cli
 from binstar_client.errors import NotFound
 
 from astropy.extern import six
+from astropy.extern.six.moves import xmlrpc_client as xmlrpclib
+
+from generate_initial_versions import get_pypi_info
 
 BINSTAR_CHANNEL = 'astropy'
 PYPI_XMLRPC = 'https://pypi.python.org/pypi'
@@ -17,11 +20,16 @@ PYPI_XMLRPC = 'https://pypi.python.org/pypi'
 
 class Package(object):
     """docstring for Package"""
+
+    # The class should only need one client for communicating with PyPI
+    client = xmlrpclib.ServerProxy(PYPI_XMLRPC)
+
     def __init__(self, pypi_name, version=None):
         self._pypi_name = pypi_name
         self.required_version = version
         self._build = False
         self._url = None
+        self._md5 = None
 
     @property
     def pypi_name(self):
@@ -58,21 +66,47 @@ class Package(object):
 
     @property
     def url(self):
-        if self._url:
-            return self._url
+        if not self._url:
+            self._retrieve_package_metadata()
 
-        client = xmlrpclib.ServerProxy(PYPI_XMLRPC)
-        urls = client.release_urls(self.pypi_name, self.required_version)
+        return self._url
+
+    @property
+    def md5(self):
+        if not self._md5:
+            self._retrieve_package_metadata()
+
+        return self._md5
+
+    @property
+    def filename(self):
+        return self.url.split('/')[-1]
+
+    def _retrieve_package_metadata(self):
+        """
+        Get URL and md5 checksum from PyPI for either the specified version
+        or the most recent version.
+        """
+        if not self.required_version:
+            version = get_pypi_info(self.pypi_name)
+        else:
+            version = self.required_version
+
+        urls = self.client.release_urls(self.pypi_name, version)
         try:
-            return urls[0]['url']
+            url = urls[0]['url']
+            md5sum = urls[0]['md5_digest']
         except IndexError:
             # Apparently a pypi release isn't required to have any source?
             # If it doesn't, then return None
             print('No source found for {}: {}'.format(self.pypi_name,
                   self.required_version))
-            return None
+            url = None
+            md5sum = None
+        self._url = url
+        self._md5 = md5sum
 
-    def download(self, directory):
+    def download(self, directory, checksum=True):
         """
         Download package and store in directory.
 
@@ -80,14 +114,25 @@ class Package(object):
         ----------
         directory : str
             Directory in which to store the downloaded package.
+
+        checksum: bool, optional
+            If ``True``, check the MD5 checksum of the download.
         """
         loader = six.moves.urllib.request.URLopener()
-        destination = os.path.join(directory, self.url.split('/')[-1])
+        destination = os.path.join(directory, self.filename)
         print(destination)
         loader.retrieve(self.url, destination)
+        if checksum:
+            with open(destination, 'rb') as f:
+                # Not worried about the packages being too big for memory.
+                contents = f.read()
+            md5_downloaded = hashlib.md5(contents).hexdigest()
+            if md5_downloaded != self.md5:
+                raise ValueError('checksum mismatch '
+                                 'in {}'.format(self.filename))
 
 
-def get_package_version(requirements_path):
+def get_package_versions(requirements_path):
     """
     Read and parse list of packages, optionally normalizing by lower casing
     names.
@@ -135,7 +180,7 @@ def construct_build_list(packages, conda_channel=None):
 
 def main(args):
     print(os.getcwd())
-    packages = get_package_version(args.requirements)
+    packages = get_package_versions(args.requirements)
     to_build = construct_build_list(packages, conda_channel='astropy')
     for p in to_build:
         p.download('bdist_conda')
