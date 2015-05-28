@@ -35,6 +35,7 @@ requirements:
     - scipy
     - matplotlib
     - scikit-learn
+    - astropy
 
 test:
   # Python imports
