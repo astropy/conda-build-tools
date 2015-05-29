@@ -5,6 +5,7 @@ from argparse import ArgumentParser
 import os
 import re
 import hashlib
+import tarfile
 
 from binstar_client.scripts import cli
 from binstar_client.errors import NotFound
@@ -16,6 +17,9 @@ from generate_initial_versions import get_pypi_info
 
 BINSTAR_CHANNEL = 'astropy'
 PYPI_XMLRPC = 'https://pypi.python.org/pypi'
+BDIST_CONDA_FOLDER = 'bdist_conda'
+RECIPE_TEMPLATE_FOLDER = 'recipe-templates'
+RECIPE_FOLDER = 'recipes'
 
 
 class Package(object):
@@ -209,10 +213,24 @@ def main(args):
     print(os.getcwd())
     packages = get_package_versions(args.requirements)
     to_build = construct_build_list(packages, conda_channel='astropy')
+    try:
+        os.mkdir(BDIST_CONDA_FOLDER)
+    except OSError:
+        # We'll assume the directory already exists and keep going.
+        pass
+
     for p in to_build:
-        p.download('bdist_conda')
-    #print('\n'.join([p.pypi_name for p in to_build]))
-    #print('\n'.join([str(p.url) for p in to_build]))
+        # TODO add logic to check for recipe template.
+        p.download(BDIST_CONDA_FOLDER)
+        source_archive = os.path.join(BDIST_CONDA_FOLDER, p.filename)
+        source_destination = os.path.join(BDIST_CONDA_FOLDER,
+                                          p.filename.rstrip('.tar.gz'))
+        with tarfile.open(source_archive) as archive:
+            # If this directory already exists something is very wrong, so
+            # don't catch the OSError if it is raised.
+            os.mkdir(source_destination)
+            archive.extractall(source_destination)
+        os.remove(source_archive)
 
 
 if __name__ == '__main__':
