@@ -20,7 +20,7 @@ from generate_initial_versions import get_pypi_info
 BINSTAR_CHANNEL = 'astropy'
 PYPI_XMLRPC = 'https://pypi.python.org/pypi'
 BDIST_CONDA_FOLDER = 'bdist_conda'
-TEMPLATE_FOLDER = 'recipe_tamplates'
+TEMPLATE_FOLDER = 'recipe_templates'
 RECIPE_FOLDER = 'recipes'
 
 
