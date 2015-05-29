@@ -1,11 +1,11 @@
 package:
   name: astroml
-  version: "0.3"
+  version: "{{version}}"
 
 source:
-  fn: astroML-0.3.tar.gz
-  url: https://pypi.python.org/packages/source/a/astroML/astroML-0.3.tar.gz
-  md5: 56d5c281ca079eb569ef1898be1604db
+  fn: astroML-{{version}}.tar.gz
+  url: https://pypi.python.org/packages/source/a/astroML/astroML-{{version}}.tar.gz
+  md5: {{md5}}
 #  patches:
    # List any patch files here
    # - fix.patch

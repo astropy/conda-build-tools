@@ -1,11 +1,11 @@
 package:
   name: montage-wrapper
-  version: "0.9.8"
+  version: "{{version}}"
 
 source:
-  fn: montage-wrapper-0.9.8.tar.gz
-  url: https://pypi.python.org/packages/source/m/montage-wrapper/montage-wrapper-0.9.8.tar.gz
-  md5: f309653b9858e5cab5b1bdce3f152978
+  fn: montage-wrapper-{{version}}.tar.gz
+  url: https://pypi.python.org/packages/source/m/montage-wrapper/montage-wrapper-{{version}}.tar.gz
+  md5: {{md5}}
 #  patches:
    # List any patch files here
    # - fix.patch

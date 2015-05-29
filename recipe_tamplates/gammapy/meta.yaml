@@ -1,11 +1,11 @@
 package:
   name: gammapy
-  version: "0.2"
+  version: "{{version}}"
 
 source:
-  fn: gammapy-0.2.tar.gz
-  url: https://pypi.python.org/packages/source/g/gammapy/gammapy-0.2.tar.gz
-  md5: 2a73f8b892764af7d1067dc6a3fac913
+  fn: gammapy-{{version}}.tar.gz
+  url: https://pypi.python.org/packages/source/g/gammapy/gammapy-{{version}}.tar.gz
+  md5: {{md5}}
 #  patches:
    # List any patch files here
    # - fix.patch
