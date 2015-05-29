@@ -13,12 +13,14 @@ from binstar_client.errors import NotFound
 from astropy.extern import six
 from astropy.extern.six.moves import xmlrpc_client as xmlrpclib
 
+from jinja2 import Environment, FileSystemLoader
+
 from generate_initial_versions import get_pypi_info
 
 BINSTAR_CHANNEL = 'astropy'
 PYPI_XMLRPC = 'https://pypi.python.org/pypi'
 BDIST_CONDA_FOLDER = 'bdist_conda'
-RECIPE_TEMPLATE_FOLDER = 'recipe-templates'
+TEMPLATE_FOLDER = 'recipe_tamplates'
 RECIPE_FOLDER = 'recipes'
 
 
@@ -210,17 +212,35 @@ def construct_build_list(packages, conda_channel=None):
 
 
 def main(args):
-    print(os.getcwd())
     packages = get_package_versions(args.requirements)
     to_build = construct_build_list(packages, conda_channel='astropy')
-    try:
-        os.mkdir(BDIST_CONDA_FOLDER)
-    except OSError:
-        # We'll assume the directory already exists and keep going.
-        pass
+    needs_recipe = os.listdir(TEMPLATE_FOLDER)
 
-    for p in to_build:
-        # TODO add logic to check for recipe template.
+    build_recipe = [p for p in to_build if p.conda_name in needs_recipe]
+    build_bdist = [p for p in to_build if p.conda_name not in needs_recipe]
+
+    if build_bdist:
+        os.mkdir(BDIST_CONDA_FOLDER)
+
+    if build_recipe:
+        os.mkdir(RECIPE_FOLDER)
+        full_template_path = os.path.abspath(TEMPLATE_FOLDER)
+        jinja_env = Environment(loader=FileSystemLoader(full_template_path))
+
+    for p in build_recipe:
+        print('Building {} from recipe.'.format(p.conda_name))
+        recipe_path = os.path.join(RECIPE_FOLDER, p.conda_name)
+        template_path = os.path.join(TEMPLATE_FOLDER, p.conda_name)
+        os.mkdir(recipe_path)
+        templates = [d for d in os.listdir(template_path) if not d.startswith('.')]
+        for template in templates:
+            tpl = jinja_env.get_template('/'.join([p.conda_name, template]))
+            rendered = tpl.render(version=p.required_version,
+                                  md5=p.md5)
+            with open(os.path.join(recipe_path, template), 'wt') as f:
+                f.write(rendered)
+
+    for p in build_bdist:
         p.download(BDIST_CONDA_FOLDER)
         source_archive = os.path.join(BDIST_CONDA_FOLDER, p.filename)
         source_destination = os.path.join(BDIST_CONDA_FOLDER,
