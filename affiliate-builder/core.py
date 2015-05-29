@@ -19,7 +19,19 @@ PYPI_XMLRPC = 'https://pypi.python.org/pypi'
 
 
 class Package(object):
-    """docstring for Package"""
+    """
+    A package to be built for conda.
+
+    Parameters
+    ----------
+
+    pypi_name : str
+        Name of the package on PyPI. Note that PyPI is not case sensitive.
+
+    version: str, optional
+        Version number of the package. ``None``, the default, implies the most
+        recent version visible on PyPI should be used.
+    """
 
     # The class should only need one client for communicating with PyPI
     client = xmlrpclib.ServerProxy(PYPI_XMLRPC)
@@ -33,14 +45,24 @@ class Package(object):
 
     @property
     def pypi_name(self):
+        """
+        Name of the package on PyPI.
+        """
         return self._pypi_name
 
     @property
     def conda_name(self):
+        """
+        Name of the package on binstar (conda), which requires lowercase
+        names.
+        """
         return self.pypi_name.lower()
 
     @property
     def required_version(self):
+        """
+        Version number of the package.
+        """
         return self._required_version
 
     @required_version.setter
@@ -53,6 +75,10 @@ class Package(object):
 
     @property
     def build(self):
+        """
+        bool:
+            ``True`` if this package needs to be built.
+        """
         return self._build
 
     @build.setter
@@ -134,8 +160,7 @@ class Package(object):
 
 def get_package_versions(requirements_path):
     """
-    Read and parse list of packages, optionally normalizing by lower casing
-    names.
+    Read and parse list of packages.
 
     Parameters
     ----------
@@ -170,6 +195,8 @@ def construct_build_list(packages, conda_channel=None):
                                             package=package.conda_name,
                                             version=package.required_version)
         print(argument)
+        # Decide whether the package needs to be built by checking to see if
+        # it exists on binstar.
         try:
             cli.main(args=['show', argument])
         except NotFound:
