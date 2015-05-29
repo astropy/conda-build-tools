@@ -246,10 +246,7 @@ def main(args):
         source_destination = os.path.join(BDIST_CONDA_FOLDER,
                                           p.filename.rstrip('.tar.gz'))
         with tarfile.open(source_archive) as archive:
-            # If this directory already exists something is very wrong, so
-            # don't catch the OSError if it is raised.
-            os.mkdir(source_destination)
-            archive.extractall(source_destination)
+            archive.extractall(BDIST_CONDA_FOLDER)
         os.remove(source_archive)
 
 
