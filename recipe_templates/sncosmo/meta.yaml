@@ -27,7 +27,8 @@ source:
 requirements:
   build:
     - python
-    - astropy_helpers
+    - astropy-helpers
+    - numpy
 
   run:
     - python
