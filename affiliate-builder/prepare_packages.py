@@ -76,10 +76,6 @@ class Package(object):
         self._required_version = value.strip()
 
     @property
-    def on_binstar(self):
-        return self.on_binstar
-
-    @property
     def build(self):
         """
         bool:
