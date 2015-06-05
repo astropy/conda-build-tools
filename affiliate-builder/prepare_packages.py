@@ -7,8 +7,9 @@ import re
 import hashlib
 import tarfile
 
-from binstar_client.scripts import cli
+from binstar_client.utils import get_binstar
 from binstar_client.errors import NotFound
+from conda import config
 
 from astropy.extern import six
 from astropy.extern.six.moves import xmlrpc_client as xmlrpclib
@@ -190,19 +191,28 @@ def get_package_versions(requirements_path):
 
 def construct_build_list(packages, conda_channel=None):
     channel = conda_channel or BINSTAR_CHANNEL
-    argument_template = '{channel}/{package}/{version}'
 
     for package in packages:
-        argument = argument_template.format(channel=channel,
-                                            package=package.conda_name,
-                                            version=package.required_version)
-        print(argument)
+        binstar = get_binstar()
+
         # Decide whether the package needs to be built by checking to see if
         # it exists on binstar.
         try:
-            cli.main(args=['show', argument])
+            binstar_info = binstar.release(channel,
+                                           package.conda_name,
+                                           package.required_version)
         except NotFound:
+            # No builds for this version on any platform, so need to build.
             package.build = True
+
+        if not package.build:
+            # We have binstar_info, need to check whether we have this
+            # platform.
+            for d in binstar_info['distributions']:
+                if d['attrs']['subdir'] == config.subdir:
+                    break
+            else:
+                package.build = True
 
     return [p for p in packages if p.build and not p.is_dev and p.url]
 
