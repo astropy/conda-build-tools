@@ -6,6 +6,7 @@ import os
 import re
 import hashlib
 import tarfile
+import zipfile
 
 from binstar_client.utils import get_binstar
 from binstar_client.errors import NotFound
@@ -183,6 +184,8 @@ def get_package_versions(requirements_path):
 
     packages = []
     for p in package_list:
+        if p.startswith('#'):
+            continue
         name, version = p.split('==')
         packages.append(Package(name, version=version))
 
@@ -251,8 +254,12 @@ def main(args):
         source_archive = os.path.join(BDIST_CONDA_FOLDER, p.filename)
         source_destination = os.path.join(BDIST_CONDA_FOLDER,
                                           p.filename.rstrip('.tar.gz'))
-        with tarfile.open(source_archive) as archive:
-            archive.extractall(BDIST_CONDA_FOLDER)
+        try:
+            with tarfile.open(source_archive) as archive:
+                archive.extractall(BDIST_CONDA_FOLDER)
+        except tarfile.ReadError:
+            with zipfile.ZipFile(source_archive) as archive:
+                archive.extractall(BDIST_CONDA_FOLDER)
         os.remove(source_archive)
 
 
