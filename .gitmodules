@@ -1,0 +1,3 @@
+[submodule "Obvious-CI"]
+	path = Obvious-CI
+	url = https://github.com/pelson/Obvious-CI.git
