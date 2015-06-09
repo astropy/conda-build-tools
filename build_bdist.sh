@@ -9,8 +9,8 @@ do
     CONDA_PY=2.7 conda build $recipe || echo "Failed on $recipe"
 done
 
+to_build=$(cat build_order.txt)
 cd bdist_conda
-to_build=[a-zA-Z]*
 for d in $to_build
     do
         cd $d
