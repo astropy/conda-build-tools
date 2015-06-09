@@ -24,7 +24,7 @@ PYPI_XMLRPC = 'https://pypi.python.org/pypi'
 BDIST_CONDA_FOLDER = 'bdist_conda'
 TEMPLATE_FOLDER = 'recipe_templates'
 RECIPE_FOLDER = 'recipes'
-
+BUILD_ORDER = 'build_order.txt'
 
 class Package(object):
     """
@@ -220,6 +220,16 @@ def construct_build_list(packages, conda_channel=None):
     return [p for p in packages if p.build and not p.is_dev and p.url]
 
 
+def write_build_order(build_bdist):
+    """
+    Write list of directories to be built in the order they appear in
+    requirements file.
+    """
+    names = [p.conda_name for p in build_bdist]
+    with open(BUILD_ORDER, 'wt') as f:
+        f.writelines('\n'.join(names))
+
+
 def main(args):
     packages = get_package_versions(args.requirements)
     to_build = construct_build_list(packages, conda_channel='astropy')
@@ -248,6 +258,8 @@ def main(args):
                                   md5=p.md5)
             with open(os.path.join(recipe_path, template), 'wt') as f:
                 f.write(rendered)
+
+    write_build_order(build_bdist)
 
     for p in build_bdist:
         p.download(BDIST_CONDA_FOLDER)
