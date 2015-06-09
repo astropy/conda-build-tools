@@ -265,13 +265,16 @@ def main(args):
         p.download(BDIST_CONDA_FOLDER)
         source_archive = os.path.join(BDIST_CONDA_FOLDER, p.filename)
         source_destination = os.path.join(BDIST_CONDA_FOLDER,
-                                          p.filename.rstrip('.tar.gz'))
+                                          p.conda_name)
         try:
             with tarfile.open(source_archive) as archive:
                 archive.extractall(BDIST_CONDA_FOLDER)
+            extracted_name = source_archive.strip('.tar.gz')
         except tarfile.ReadError:
             with zipfile.ZipFile(source_archive) as archive:
                 archive.extractall(BDIST_CONDA_FOLDER)
+            extracted_name = source_archive.strip('.zip')
+        os.rename(extracted_name, source_destination)
         os.remove(source_archive)
 
 
