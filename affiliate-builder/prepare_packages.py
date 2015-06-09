@@ -196,6 +196,7 @@ def construct_build_list(packages, conda_channel=None):
     channel = conda_channel or BINSTAR_CHANNEL
 
     for package in packages:
+        print('Checking status of {}'.format(package.conda_name))
         binstar = get_binstar()
 
         # Decide whether the package needs to be built by checking to see if
@@ -247,7 +248,7 @@ def main(args):
         jinja_env = Environment(loader=FileSystemLoader(full_template_path))
 
     for p in build_recipe:
-        print('Building {} from recipe.'.format(p.conda_name))
+        print('Writing recipe for {}.'.format(p.conda_name))
         recipe_path = os.path.join(RECIPE_FOLDER, p.conda_name)
         template_path = os.path.join(TEMPLATE_FOLDER, p.conda_name)
         os.mkdir(recipe_path)
