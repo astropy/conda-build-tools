@@ -26,6 +26,7 @@ TEMPLATE_FOLDER = 'recipe_templates'
 RECIPE_FOLDER = 'recipes'
 BUILD_ORDER = 'build_order.txt'
 
+
 class Package(object):
     """
     A package to be built for conda.
