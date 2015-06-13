@@ -1,4 +1,4 @@
-"%PYTHON%" setup.py install
+"%PYTHON%" setup.py install --ofline
 if errorlevel 1 exit 1
 
 :: Add more build steps here, if they are necessary.
