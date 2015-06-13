@@ -4,7 +4,7 @@ package:
 
 source:
   fn: sncosmo-{{version}}.tar.gz
-  url: https://pypi.python.org/packages/source/g/sncosmo/sncosmo-{{version}}.tar.gz
+  url: https://pypi.python.org/packages/source/s/sncosmo/sncosmo-{{version}}.tar.gz
   md5: {{md5}}
 #  patches:
    # List any patch files here
