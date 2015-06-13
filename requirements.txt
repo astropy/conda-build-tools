@@ -2,6 +2,7 @@
 # Comments are only allowed on lines by themselves.
 hgtools==6.3
 keyring==5.3
+beautifulsoup4==4.3.2
 astropy-helpers==1.0.2
 astroquery==0.2.4
 sncosmo==1.0.0
