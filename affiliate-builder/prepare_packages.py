@@ -193,8 +193,20 @@ def get_package_versions(requirements_path):
     return packages
 
 
+def _conda_python_build_string():
+    """
+    Construct the part of the conda build string that contains the python 
+    version.
+    """
+    conda_python_version = os.environ['CONDA_PY']
+    # Remove the period if it is in the python version.
+    conda_python_version = ''.join(conda_python_version.split('.'))
+    return 'py' + conda_python_version
+
+
 def construct_build_list(packages, conda_channel=None):
     channel = conda_channel or BINSTAR_CHANNEL
+    conda_py = _conda_python_build_string()
 
     for package in packages:
         print('Checking status of {}'.format(package.conda_name))
@@ -212,9 +224,11 @@ def construct_build_list(packages, conda_channel=None):
 
         if not package.build:
             # We have binstar_info, need to check whether we have this
-            # platform.
+            # platform and python version.
             for d in binstar_info['distributions']:
-                if d['attrs']['subdir'] == config.subdir:
+                if (d['attrs']['subdir'] == config.subdir
+                    and conda_py in d['attrs']['build']):
+
                     break
             else:
                 package.build = True
