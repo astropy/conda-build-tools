@@ -1,7 +1,7 @@
 from __future__ import (print_function, division, absolute_import,
                         unicode_literals)
 
-import urllib2
+from astropy.extern.six.moves.urllib.request import urlopen
 import json
 import tempfile
 import os
@@ -15,7 +15,7 @@ PYPI_XMLRPC = 'https://pypi.python.org/pypi'
 
 
 def get_affiliated_packages():
-    source = urllib2.urlopen(DEFAULT_AFFILIATED_REGISTRY)
+    source = urlopen(DEFAULT_AFFILIATED_REGISTRY)
     packages = json.loads(source.read())
     packages = packages['packages']
     return packages
