@@ -1,0 +1,39 @@
+# The language in this case has no bearing - we are going to be making use of "conda" for a
+# python distribution for the scientific python stack.
+language: c
+
+env:
+    global:
+        - TARGET_ARCH="x64"
+        - CONDA_INSTALL_LOCN="${HOME}/conda"
+        # Defines BINSTAR_TOKEN for astropy binstar channel
+        - secure: "q1CiYFH7bJVr/TvStI5Wke561JVYTP9lUwXu8IspB4iUe2RQ3IDicJmbQepmDfON61yE5B7lenDOH/yoI3iJJPsvtP2dSQSSJuM27Wc+PEE8rWlh9ly8gilWm8nfaL0FEDR2uXaSx/YwdG2nh+9crwAe5/yqbNv+AccDLzFvC4ZCwifIJS9q/UoZNX+WAAW9YqpkanPWTNy0S4/Hz3rgyuV86NptypwwFPS6PbaLkVkWzx50HXJPc+7OziEYedXFSLNek+agPazRSTxqf2XgMYXA9xebQsy2KJlid22BeO8gDSqIBH+55PSw5CSUoNqmPa1pGQSb7c/QLn2bxebe3WFlp/UFCFLmXuc0pwQKM4TkTHc4UBemELAg5BNbtbsPSlY88P/Ph4bslHjOt1fYD3KoidtO394r30qdIyY+Wh6eA3DJhLhgbLGu1cp8Tl25pWzK0LoPe65Xec3kC9mPkXA944JFLVwuSgEx1vbBNOdP3tGA6MVAkXJIB13Mnh79Mn12jrDiL1hICGYKUxJwvakKhEJZg57uA0T/1yGbyg4KjircLw5vIQzbzydmLOFQaCyrdIvsYi4f3iLUqHBBTOvYjAvhMlS8NT8U3uod9diiKJyXlN9nLma1PZuie8BpAUMjIqDb6DzV8cMVOK1XeqdubuISIkFtLyK0tzqcB94="
+
+    matrix:
+        - CONDA_PY=27
+          CONDA_NPY=19
+        - CONDA_PY=34
+          CONDA_NPY=19
+
+install:
+    # Install miniconda, always python2, because obvious-ci needs python2.
+    - python ./Obvious-CI/bootstrap-obvious-ci-and-miniconda.py ${CONDA_INSTALL_LOCN} ${TARGET_ARCH} 2 --without-obvci
+    - export PATH=${CONDA_INSTALL_LOCN}/bin:$PATH
+    - conda config --set always_yes true
+    - conda update conda
+    # Install a couple of dependencies we need for sure.
+    - conda install --yes astropy conda-build binstar jinja2
+    - conda config --add channels astropy
+    # Install obvious-ci
+    - cd Obvious-CI; python setup.py install; cd ..
+
+script:
+    # Get ready to build.
+    - python affiliate-builder/prepare_packages.py requirements.txt
+    - if [[ -d recipes ]]; then obvci_conda_build_dir.py --disable-upload recipes astropy; fi
+    # Build bdist_conda-based packages
+    - if [[ -d bdist_conda ]]; then bash build_bdist.sh; fi
+
+after_success:
+    # Upload to binstar...this should probably be done as the bdists are built.
+    - python affiliate-builder/upload_bdists.py
