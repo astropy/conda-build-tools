@@ -6,7 +6,7 @@ import json
 import tempfile
 import os
 import subprocess
-import xmlrpclib
+from astropy.extern.six.moves import xmlrpc_client as xmlrpclib
 
 DEFAULT_AFFILIATED_REGISTRY = 'http://affiliated.astropy.org/registry.json'
 PYPI_JSON = 'https://pypi.python.org/pypi/{pypi_name}/json'
