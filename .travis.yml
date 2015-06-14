@@ -31,10 +31,10 @@ script:
     # Get ready to build.
     - python affiliate-builder/prepare_packages.py requirements.txt
     # Build AND UPLOAD recipe-based packages.
-    - obvci_conda_build_dir.py --disable-upload recipes astropy
+    - if [[ -d recipes ]]; then obvci_conda_build_dir.py --disable-upload recipes astropy; fi
     # Build bdist_conda-based packages
-    - bash build_bdist.sh
+    - if [[ -d bdist_conda ]]; then bash build_bdist.sh; fi
 
 after_success:
     - # Upload to binstar...this should probably be done as the bdists are built.
-    - python upload_bdists.py
+    - python affiliate-builder/upload_bdists.py
