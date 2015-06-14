@@ -6,7 +6,7 @@ base=$PWD
 to_build_recipe=recipes/[a-z]*
 for recipe in $to_build_recipe
 do
-    CONDA_PY=2.7 conda build $recipe || echo "Failed on $recipe"
+    conda build $recipe || echo "Failed on $recipe"
 done
 
 to_build=$(cat build_order.txt)
