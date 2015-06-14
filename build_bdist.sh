@@ -2,12 +2,8 @@
 
 base=$PWD
 
-
-to_build_recipe=recipes/[a-z]*
-for recipe in $to_build_recipe
-do
-    conda build $recipe || echo "Failed on $recipe"
-done
+# Script below uses obvious-ci to build AND UPLOAD the packages with recipes.
+python affiliate-builder/build_recipes.py
 
 to_build=$(cat build_order.txt)
 cd bdist_conda
