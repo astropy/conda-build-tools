@@ -5,9 +5,6 @@ import os
 import glob
 
 from conda import config
-#from conda_build.metadata import MetaData
-
-from binstar_client.inspect_package.conda import inspect_conda_package
 
 from obvci.conda_tools.build import upload
 from obvci.conda_tools.build_directory import Builder
@@ -32,21 +29,6 @@ def main():
             # First grab the metadata from the package, which requires
             # opening the file.
 
-            # SKIP THIS VESTIGAL CRAP
-            # with open(package) as f:
-            #     package_data, release, file_data = inspect_conda_package(package, f)
-
-            # print(package_data, release, file_data)
-            # #package_data.update({'version': release['version']})
-            # package_data.update(release)
-            # package_data.update({'build': {'string': file_data['attrs']['build']}})
-            # package_data.update(file_data)
-            # meta = MetaData.fromdict({'package': package_data})
-            # meta.check_fields()
-            # print(meta)
-            # print('DIST:', meta.dist())
-
-            # RESUME READING HERE
             # Not going to lie: after fighting with conda for 90 minutes to
             # construct a proper MetaData object from a built package, I give
             # up.
@@ -61,8 +43,8 @@ def main():
                     return self._dist_info
 
             meta = MetaData(package_file.split('.tar.bz2')[0])
-            # Upload it
 
+            # Upload it
             upload(builder.binstar_cli, meta, BINSTAR_CHANNEL)
 
 
