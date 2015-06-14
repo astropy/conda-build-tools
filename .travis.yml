@@ -16,25 +16,24 @@ env:
           CONDA_NPY=19
 
 install:
-    # Install miniconda
-    - python ./Obvious-CI/bootstrap-obvious-ci-and-miniconda.py ${CONDA_INSTALL_LOCN} ${TARGET_ARCH} ${CONDA_PY::1} --without-obvci
+    # Install miniconda, always python2, because obvious-ci needs python2.
+    - python ./Obvious-CI/bootstrap-obvious-ci-and-miniconda.py ${CONDA_INSTALL_LOCN} ${TARGET_ARCH} 2 --without-obvci
     - export PATH=${CONDA_INSTALL_LOCN}/bin:$PATH
     - conda config --set always_yes true
     - conda update conda
     # Install a couple of dependencies we need for sure.
     - conda install --yes astropy conda-build binstar jinja2
     - conda config --add channels astropy
-    # Install Obvious-CI
+    # Install obvious-ci
     - cd Obvious-CI; python setup.py install; cd ..
 
 script:
     # Get ready to build.
     - python affiliate-builder/prepare_packages.py requirements.txt
-    # Build AND UPLOAD recipe-based packages.
     - if [[ -d recipes ]]; then obvci_conda_build_dir.py --disable-upload recipes astropy; fi
     # Build bdist_conda-based packages
     - if [[ -d bdist_conda ]]; then bash build_bdist.sh; fi
 
 after_success:
-    - # Upload to binstar...this should probably be done as the bdists are built.
+    # Upload to binstar...this should probably be done as the bdists are built.
     - python affiliate-builder/upload_bdists.py
