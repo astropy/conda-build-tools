@@ -16,6 +16,12 @@ def main():
     # Get our binstar client from the Builder to get BINSTAR_TOKEN obfuscation
     # in windows builds.
     builder = Builder(RECIPE_FOLDER, BINSTAR_CHANNEL, 'main')
+    try:
+        bdists = os.listdir(BDIST_CONDA_FOLDER)
+    except (OSError, WindowsError):
+        # Nothing to upload.
+        return
+
     conda_builds_dir = os.path.join(config.default_prefix,
                                     'conda-bld', config.subdir)
     built_packages = glob.glob(os.path.join(conda_builds_dir, '*.tar.bz2'))
