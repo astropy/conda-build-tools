@@ -5,6 +5,7 @@ import os
 import glob
 
 from conda import config
+import binstar_client
 
 from obvci.conda_tools.build import upload
 from obvci.conda_tools.build_directory import Builder
@@ -49,8 +50,11 @@ def main():
 
             meta = MetaData(package_file.split('.tar.bz2')[0])
 
-            # Upload it
-            upload(builder.binstar_cli, meta, BINSTAR_CHANNEL)
+            try:
+                # Upload it
+                upload(builder.binstar_cli, meta, BINSTAR_CHANNEL)
+            except binstar_client.errors.Unauthorized:
+                print("Not authorized to upload.")
 
 
 if __name__ == '__main__':
