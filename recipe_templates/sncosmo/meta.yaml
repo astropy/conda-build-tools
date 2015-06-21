@@ -57,7 +57,7 @@ test:
 about:
   home: http://sncosmo.readthedocs.org
   license: BSD License
-  summary: 'sncosmo: a framework for plotting astronomical and geospatial data'
+  summary: 'sncosmo: Package for supernova cosmology based on astropy'
 
 # See
 # http://docs.continuum.io/conda/build.html for

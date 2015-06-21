@@ -19,7 +19,7 @@ def main():
     builder = Builder(RECIPE_FOLDER, BINSTAR_CHANNEL, 'main')
     try:
         bdists = os.listdir(BDIST_CONDA_FOLDER)
-    except (OSError, WindowsError):
+    except (OSError):
         # Nothing to upload.
         return
 
