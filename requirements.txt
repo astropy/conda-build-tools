@@ -13,7 +13,7 @@ sncosmo==1.0.0
 pydl==0.3.0
 montage-wrapper==0.9.8
 ccdproc==0.3.1
-wcsaxes==0.3
+wcsaxes==0.4
 gammapy==0.2
 pyvo==0.0beta2
 photutils==0.1
