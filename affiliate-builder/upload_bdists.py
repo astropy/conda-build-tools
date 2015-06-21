@@ -5,6 +5,7 @@ import os
 import glob
 
 from conda import config
+import binstar_client
 
 from obvci.conda_tools.build import upload
 from obvci.conda_tools.build_directory import Builder
@@ -16,7 +17,12 @@ def main():
     # Get our binstar client from the Builder to get BINSTAR_TOKEN obfuscation
     # in windows builds.
     builder = Builder(RECIPE_FOLDER, BINSTAR_CHANNEL, 'main')
-    bdists = os.listdir(BDIST_CONDA_FOLDER)
+    try:
+        bdists = os.listdir(BDIST_CONDA_FOLDER)
+    except (OSError, WindowsError):
+        # Nothing to upload.
+        return
+
     conda_builds_dir = os.path.join(config.default_prefix,
                                     'conda-bld', config.subdir)
     built_packages = glob.glob(os.path.join(conda_builds_dir, '*.tar.bz2'))
@@ -44,8 +50,11 @@ def main():
 
             meta = MetaData(package_file.split('.tar.bz2')[0])
 
-            # Upload it
-            upload(builder.binstar_cli, meta, BINSTAR_CHANNEL)
+            try:
+                # Upload it
+                upload(builder.binstar_cli, meta, BINSTAR_CHANNEL)
+            except binstar_client.errors.Unauthorized:
+                print("Not authorized to upload.")
 
 
 if __name__ == '__main__':
