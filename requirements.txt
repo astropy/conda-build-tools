@@ -20,7 +20,7 @@ photutils==0.1
 spherical-geometry==1.0.4
 APLpy==1.0
 specutils==0.1
-imexam==0.5.1
+imexam==0.5
 gwcs==0.1.dev44
 pyregion==1.1.4
 astroML==0.3
