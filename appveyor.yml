@@ -37,7 +37,7 @@ install:
     - cmd: conda config --set always_yes true
     - cmd: conda update conda
     - cmd: conda config --add channels astropy
-    - cmd: conda install --quiet astropy conda-build binstar jinja2
+    - cmd: conda install --quiet astropy conda-build binstar jinja2 cython
     # Install obvious-ci; run 2to3 first if the build is python 3.
     - cmd: cd Obvious-CI & (if %CONDA_PY:~0,1%==3 2to3 -w .) & python setup.py install & cd ..
 
