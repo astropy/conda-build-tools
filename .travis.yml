@@ -26,9 +26,9 @@ install:
     - python ./Obvious-CI/bootstrap-obvious-ci-and-miniconda.py ${CONDA_INSTALL_LOCN} ${TARGET_ARCH} ${CONDA_PY::1} --without-obvci
     - export PATH=${CONDA_INSTALL_LOCN}/bin:$PATH
     - conda config --set always_yes true
-    - conda update conda
+    - conda update --quiet conda
     # Install a couple of dependencies we need for sure.
-    - conda install --yes astropy conda-build binstar jinja2 cython
+    - conda install --quiet --yes astropy conda-build binstar jinja2 cython
     - conda config --add channels astropy
     # Install obvious-ci; run 2to3 first if the build is python 3.
     - cd Obvious-CI; if [[ ${CONDA_PY::1} == 3 ]]; then 2to3 -w .; fi; python setup.py install; cd ..
