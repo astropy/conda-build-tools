@@ -240,6 +240,8 @@ def construct_build_list(packages, conda_channel=None):
         build_message = 'BUILD'
         if not package.build:
             build_message = ("DO NOT " + build_message).lower()
+        elif package.is_dev:
+            build_message = 'skip because package version is dev'
         print(build_message)
 
     return [p for p in packages if p.build and not p.is_dev and p.url]
