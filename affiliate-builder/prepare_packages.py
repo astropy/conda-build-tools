@@ -195,10 +195,14 @@ def get_package_versions(requirements_path):
 
 def _conda_python_build_string():
     """
-    Construct the part of the conda build string that contains the python 
+    Construct the part of the conda build string that contains the python
     version.
     """
-    conda_python_version = os.environ['CONDA_PY']
+    try:
+        conda_python_version = os.environ['CONDA_PY']
+    except KeyError:
+        raise RuntimeError('The environment variable CONDA_PY needs to be '
+                           'set before running this script.')
     # Remove the period if it is in the python version.
     conda_python_version = ''.join(conda_python_version.split('.'))
     return 'py' + conda_python_version
