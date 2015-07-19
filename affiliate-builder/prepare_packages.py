@@ -195,10 +195,14 @@ def get_package_versions(requirements_path):
 
 def _conda_python_build_string():
     """
-    Construct the part of the conda build string that contains the python 
+    Construct the part of the conda build string that contains the python
     version.
     """
-    conda_python_version = os.environ['CONDA_PY']
+    try:
+        conda_python_version = os.environ['CONDA_PY']
+    except KeyError:
+        raise RuntimeError('The environment variable CONDA_PY needs to be '
+                           'set before running this script.')
     # Remove the period if it is in the python version.
     conda_python_version = ''.join(conda_python_version.split('.'))
     return 'py' + conda_python_version
@@ -209,7 +213,7 @@ def construct_build_list(packages, conda_channel=None):
     conda_py = _conda_python_build_string()
 
     for package in packages:
-        print('Checking status of {}'.format(package.conda_name))
+        print('Checking status of {}...'.format(package.conda_name), end="")
         binstar = get_binstar()
 
         # Decide whether the package needs to be built by checking to see if
@@ -232,6 +236,13 @@ def construct_build_list(packages, conda_channel=None):
                     break
             else:
                 package.build = True
+
+        build_message = 'BUILD'
+        if not package.build:
+            build_message = ("DO NOT " + build_message).lower()
+        elif package.is_dev:
+            build_message = 'skip because package version is dev'
+        print(build_message)
 
     return [p for p in packages if p.build and not p.is_dev and p.url]
 
