@@ -213,7 +213,7 @@ def construct_build_list(packages, conda_channel=None):
     conda_py = _conda_python_build_string()
 
     for package in packages:
-        print('Checking status of {}'.format(package.conda_name))
+        print('Checking status of {}...'.format(package.conda_name), end="")
         binstar = get_binstar()
 
         # Decide whether the package needs to be built by checking to see if
@@ -236,6 +236,11 @@ def construct_build_list(packages, conda_channel=None):
                     break
             else:
                 package.build = True
+
+        build_message = 'BUILD'
+        if not package.build:
+            build_message = ("DO NOT " + build_message).lower()
+        print(build_message)
 
     return [p for p in packages if p.build and not p.is_dev and p.url]
 
