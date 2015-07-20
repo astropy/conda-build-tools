@@ -1,0 +1,8 @@
+# The extra section will be allowed in an upcoming release of conda-build
+
+extra:
+    # List of platforms on which build of this package is expected to succeed.
+    # Allowed options are those in binstar subdir: osx, linux, win32, win64
+    platforms:
+        - osx
+        - linux

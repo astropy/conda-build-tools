@@ -1,0 +1,68 @@
+package:
+  name: imexam
+  version: "{{version}}"
+
+source:
+  fn: imexam-{{version}}.tar.gz
+  url: https://pypi.python.org/packages/source/i/imexam/imexam-{{version}}.tar.gz
+  md5: {{md5}}
+#  patches:
+   # List any patch files here
+   # - fix.patch
+
+# build:
+  # preserve_egg_dir: True
+  # entry_points:
+    # Put any entry points (scripts to be generated automatically) here. The
+    # syntax is module:function.  For example
+    #
+    # - sncosmo = sncosmo:main
+    #
+    # Would create an entry point called sncosmo that calls sncosmo.main()
+
+  # If this is a new build for the same version, increment the build
+  # number. If you do not include this key, it defaults to 0.
+  # number: 1
+
+requirements:
+  build:
+    - astropy-helpers
+    - astropy
+    - numpy >=1.6.0
+    - scipy
+    - cython
+    - astropy >=1.0
+    - matplotlib
+    - ipython
+    - python
+  run:
+    - astropy
+    - numpy >=1.6.0
+    - scipy
+    - cython
+    - astropy >=1.0
+    - matplotlib
+    - ipython
+    - python
+
+test:
+  # Python imports
+  imports:
+    - imexam
+
+  # commands:
+    # You can put test commands to be run here.  Use this to test that the
+    # entry points work.
+
+
+  # You can also put a file called run_test.py in the recipe that will be run
+  # at test time.
+
+  # requires:
+    # Put any additional test requirements here.  For example
+    # - nose
+
+about:
+  home: http://imexam.readthedocs.org
+  license: BSD License
+  summary: 'AstroPy affiliated package for quick image analysis'
