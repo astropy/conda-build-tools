@@ -53,6 +53,7 @@ class Package(object):
         self._build = False
         self._url = None
         self._md5 = None
+        self._build_platforms = None
 
     @property
     def pypi_name(self):
