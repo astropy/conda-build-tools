@@ -27,7 +27,7 @@ BDIST_CONDA_FOLDER = 'bdist_conda'
 TEMPLATE_FOLDER = 'recipe_templates'
 RECIPE_FOLDER = 'recipes'
 BUILD_ORDER = 'build_order.txt'
-ALL_PLATFORMS = ['osx-64', 'linux', 'win32', 'win64']
+ALL_PLATFORMS = ['osx-64', 'linux-64', 'linux-32', 'win-32', 'win-64']
 
 class Package(object):
     """
