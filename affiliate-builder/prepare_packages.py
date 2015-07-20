@@ -288,12 +288,11 @@ def construct_build_list(packages, conda_channel=None):
         else:
             build_message = 'BUILD'
 
+        package.build = (package.build and not package.is_dev
+                         and package.url and not unsupported_platform)
         print(build_message)
 
-    return [p for p in packages if p.build
-                                   and not p.is_dev
-                                   and p.url
-                                   and not unsupported_platform]
+    return [p for p in packages if p.build]
 
 
 def write_build_order(build_bdist):
