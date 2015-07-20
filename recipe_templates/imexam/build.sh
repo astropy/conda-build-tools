@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Work around this requirement for now...
+
+pip install d2to1
 $PYTHON setup.py install
 
 # Add more build steps here, if they are necessary.

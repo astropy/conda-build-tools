@@ -6,6 +6,8 @@ source:
   fn: imexam-{{version}}.tar.gz
   url: https://pypi.python.org/packages/source/i/imexam/imexam-{{version}}.tar.gz
   md5: {{md5}}
+  patches:
+    - setup-hack.diff
 #  patches:
    # List any patch files here
    # - fix.patch
@@ -35,6 +37,8 @@ requirements:
     - matplotlib
     - ipython
     - python
+    - mock
+    - nose
   run:
     - astropy
     - numpy >=1.6.0
@@ -44,6 +48,7 @@ requirements:
     - matplotlib
     - ipython
     - python
+
 
 test:
   # Python imports
