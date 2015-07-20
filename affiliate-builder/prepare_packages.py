@@ -276,12 +276,15 @@ def construct_build_list(packages, conda_channel=None):
                 package.build = True
 
         unsupported_platform = config.subdir not in package.build_platforms
+
         if not package.build:
             build_message = "do not build"
         elif package.is_dev:
             build_message = 'skip because package version is dev'
         elif unsupported_platform:
             build_message = 'build not supported on this platform'
+        elif not package.url:
+            build_message = 'no source found on PyPI'
         else:
             build_message = 'BUILD'
 
