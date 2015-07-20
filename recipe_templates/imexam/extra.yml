@@ -2,7 +2,8 @@
 
 extra:
     # List of platforms on which build of this package is expected to succeed.
-    # Allowed options are those in binstar subdir: osx, linux, win32, win64
+    # Allowed options are those in binstar subdir:
+    #       osx-64, linux-32, linux-64, win-32, win-64
     platforms:
-        - osx
-        - linux
+        - osx-64
+        - linux-64
