@@ -8,6 +8,8 @@ import hashlib
 import tarfile
 import zipfile
 
+import yaml
+
 from binstar_client.utils import get_binstar
 from binstar_client.errors import NotFound
 from conda import config
@@ -25,7 +27,7 @@ BDIST_CONDA_FOLDER = 'bdist_conda'
 TEMPLATE_FOLDER = 'recipe_templates'
 RECIPE_FOLDER = 'recipes'
 BUILD_ORDER = 'build_order.txt'
-
+ALL_PLATFORMS = ['osx', 'linux', 'win32', 'win64']
 
 class Package(object):
     """
@@ -112,6 +114,41 @@ class Package(object):
     @property
     def filename(self):
         return self.url.split('/')[-1]
+
+    @property
+    def build_platforms(self):
+        """
+        Return list of platforms on which this package can be built.
+
+        Defaults to the value of ``ALL_PLATFORMS``.
+
+        Checks for build information by looking at recipe *templates*, which
+        is probably not really the way to go...might be more generalizable if
+        it looked at recipes instead.
+        """
+        # Lazy memoization...
+        if self._build_platforms:
+            return self._build_platforms
+
+        template_dir = os.path.join(TEMPLATE_FOLDER, self.conda_name)
+
+        # For now need to keep platform information in a separate YAML file.
+        # Will change in upcoming version of conda.
+        platform_file = os.path.join(template_dir, 'extra.yml')
+        try:
+            with open(platform_file, 'r') as f:
+                platform_info = yaml.safe_load(f)
+        except IOError:
+            # No recipe, make an empty dict for now.
+            platform_info = {}
+
+        try:
+            platforms = platform_info['extra']['platforms']
+        except KeyError:
+            platforms = ALL_PLATFORMS
+
+        self._build_platforms = platforms
+        return self._build_platforms
 
     def _retrieve_package_metadata(self):
         """
@@ -237,14 +274,22 @@ def construct_build_list(packages, conda_channel=None):
             else:
                 package.build = True
 
-        build_message = 'BUILD'
+        unsupported_platform = config.subdir not in package.build_platforms
         if not package.build:
-            build_message = ("DO NOT " + build_message).lower()
+            build_message = "do not build"
         elif package.is_dev:
             build_message = 'skip because package version is dev'
+        elif unsupported_platform:
+            build_message = 'build not supported on this platform'
+        else:
+            build_message = 'BUILD'
+
         print(build_message)
 
-    return [p for p in packages if p.build and not p.is_dev and p.url]
+    return [p for p in packages if p.build
+                                   and not p.is_dev
+                                   and p.url
+                                   and not unsupported_platform]
 
 
 def write_build_order(build_bdist):
@@ -259,7 +304,9 @@ def write_build_order(build_bdist):
 
 def main(args):
     packages = get_package_versions(args.requirements)
+
     to_build = construct_build_list(packages, conda_channel='astropy')
+
     needs_recipe = os.listdir(TEMPLATE_FOLDER)
 
     build_recipe = [p for p in to_build if p.conda_name in needs_recipe]
@@ -273,6 +320,7 @@ def main(args):
         full_template_path = os.path.abspath(TEMPLATE_FOLDER)
         jinja_env = Environment(loader=FileSystemLoader(full_template_path))
 
+    # Write recipes from templates.
     for p in build_recipe:
         print('Writing recipe for {}.'.format(p.conda_name))
         recipe_path = os.path.join(RECIPE_FOLDER, p.conda_name)
@@ -288,6 +336,7 @@ def main(args):
 
     write_build_order(build_bdist)
 
+    # Download and unpack source for all bdist_conda builds.
     for p in build_bdist:
         p.download(BDIST_CONDA_FOLDER)
         source_archive = os.path.join(BDIST_CONDA_FOLDER, p.filename)
