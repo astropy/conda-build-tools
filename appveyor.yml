@@ -35,9 +35,9 @@ install:
     - cmd: SET PATH=%CONDA_INSTALL_LOCN%;%CONDA_INSTALL_LOCN%\Scripts;%PATH%
 
     - cmd: conda config --set always_yes true
-    - cmd: conda update conda
+    - cmd: conda update --quiet conda
     - cmd: conda config --add channels astropy
-    - cmd: conda install --quiet astropy conda-build binstar jinja2
+    - cmd: conda install --quiet astropy conda-build binstar jinja2 cython
     # Install obvious-ci; run 2to3 first if the build is python 3.
     - cmd: cd Obvious-CI & (if %CONDA_PY:~0,1%==3 2to3 -w .) & python setup.py install & cd ..
 
@@ -46,7 +46,7 @@ build: off
 
 test_script:
     - "%CMD_IN_ENV% python affiliate-builder\\prepare_packages.py requirements.txt"
-    - if exist recipes %CMD_IN_ENV% obvci_conda_build_dir.py --disable-upload recipes astropy
+    - if exist recipes %CMD_IN_ENV% obvci_conda_build_dir.py recipes astropy
     - if exist bdist_conda %CMD_IN_ENV% build_bdist.bat
 
 on_success:
