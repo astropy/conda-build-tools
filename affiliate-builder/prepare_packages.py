@@ -54,6 +54,8 @@ class Package(object):
         self._url = None
         self._md5 = None
         self._build_platforms = None
+        self._extra_meta = None
+        self._build_pythons = None
 
     @property
     def pypi_name(self):
@@ -131,6 +133,37 @@ class Package(object):
         if self._build_platforms:
             return self._build_platforms
 
+        platform_info = self.extra_meta
+
+        try:
+            platforms = platform_info['extra']['platforms']
+        except KeyError:
+            platforms = ALL_PLATFORMS
+
+        self._build_platforms = platforms
+        return self._build_platforms
+
+    @property
+    def build_pythons(self):
+        if self._build_pythons:
+            return self._build_pythons
+        try:
+            pythons = self.extra_meta['extra']['pythons']
+        except KeyError:
+            pythons = ["27", "34"]
+
+        self._build_pythons = pythons
+        return self._build_pythons
+
+    @property
+    def extra_meta(self):
+        """
+        The 'extra' metadata, for now read in from a file separate from
+        meta.yaml.
+        """
+        if self._extra_meta is not None:
+            return self._extra_meta
+
         template_dir = os.path.join(TEMPLATE_FOLDER, self.conda_name)
 
         # For now need to keep platform information in a separate YAML file.
@@ -143,13 +176,9 @@ class Package(object):
             # No recipe, make an empty dict for now.
             platform_info = {}
 
-        try:
-            platforms = platform_info['extra']['platforms']
-        except KeyError:
-            platforms = ALL_PLATFORMS
+        self._extra_meta = platform_info
 
-        self._build_platforms = platforms
-        return self._build_platforms
+        return self._extra_meta
 
     def _retrieve_package_metadata(self):
         """
@@ -276,6 +305,7 @@ def construct_build_list(packages, conda_channel=None):
                 package.build = True
 
         unsupported_platform = config.subdir not in package.build_platforms
+        unsupported_python = conda_py[2:] not in package.build_pythons
 
         if not package.build:
             build_message = "do not build"
@@ -283,13 +313,17 @@ def construct_build_list(packages, conda_channel=None):
             build_message = 'skip because package version is dev'
         elif unsupported_platform:
             build_message = 'build not supported on this platform'
+        elif unsupported_python:
+            build_message = 'build not supported on this python version'
         elif not package.url:
             build_message = 'no source found on PyPI'
         else:
             build_message = 'BUILD'
 
         package.build = (package.build and not package.is_dev
-                         and package.url and not unsupported_platform)
+                         and package.url and not unsupported_platform
+                         and not unsupported_python)
+
         print(build_message)
 
     return [p for p in packages if p.build]
