@@ -152,7 +152,9 @@ class Package(object):
         except KeyError:
             pythons = ["27", "34"]
 
-        self._build_pythons = pythons
+        # Make sure version is always a string so it can be compared
+        # to CONDA_PY later.
+        self._build_pythons = [str(p) for p in pythons]
         return self._build_pythons
 
     @property
