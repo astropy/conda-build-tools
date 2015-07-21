@@ -7,3 +7,7 @@ extra:
     platforms:
         - osx-64
         - linux-64
+    # List of python versions (in CONDA_PY format) for which this package
+    # should be built.
+    pythons:
+        - 27
