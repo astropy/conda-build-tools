@@ -46,7 +46,7 @@ build: off
 
 test_script:
     - "%CMD_IN_ENV% python affiliate-builder\\prepare_packages.py requirements.txt"
-    - if exist recipes %CMD_IN_ENV% obvci_conda_build_dir.py recipes astropy
+    - if exist recipes %CMD_IN_ENV% python %CONDA_INSTALL_LOCN%\Scripts\obvci_conda_build_dir.py recipes astropy
     - if exist bdist_conda %CMD_IN_ENV% build_bdist.bat
 
 on_success:
