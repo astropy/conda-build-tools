@@ -28,8 +28,11 @@ def main():
     built_packages = glob.glob(os.path.join(conda_builds_dir, '*.tar.bz2'))
     for package in built_packages:
         _, package_file = os.path.split(package)
-        name = package_file.split('-')[0]
-
+        # Work around packages having a hypen in their name
+        name = package_file.split('-')
+        name.pop(-1)
+        name.pop(-1)
+        name = "-".join(name)
         if name in bdists:
             # Need to upload this one...
             # First grab the metadata from the package, which requires
