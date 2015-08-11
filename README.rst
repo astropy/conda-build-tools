@@ -42,6 +42,11 @@ Add a new affiliated package
     + Adds the package information to ``requirements.txt``
     + Adds a template recipe for the package to ``recipe-templates``.
 
+License
+=======
+
+This software is licensed under a BSD 3-clause license. See ``LICENSE.rst`` for details.
+
 .. _astropy: http://astropy.org
 .. _conda: http://conda.pydata.org/
 .. _PEP 440: https://www.python.org/dev/peps/pep-0440/
