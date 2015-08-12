@@ -24,4 +24,5 @@ gwcs==0.1.dev44
 pyregion==1.1.4
 astroML==0.3
 ginga==2.4.20150626080455
+emcee==2.1.0
 naima==0.5
