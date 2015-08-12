@@ -27,9 +27,11 @@ source:
 
 requirements:
   build:
+    - python
     - astropy
 
   run:
+    - python
     - astropy
     - scipy
 
