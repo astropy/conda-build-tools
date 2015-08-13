@@ -8,7 +8,7 @@ keyring==5.3
 ## affiliated packages
 astropy-helpers==1.0.3
 astroquery==0.2.5
-sncosmo==1.0.0
+sncosmo==1.1.0
 pydl==0.3.0
 montage-wrapper==0.9.8
 ccdproc==0.3.1
