@@ -5,6 +5,8 @@
 ## Dependencies for astropy affiliates
 hgtools==6.3
 keyring==5.3
+iminuit==1.1.1
+emcee==2.1.0
 ## affiliated packages
 astropy-helpers==1.0.3
 astroquery==0.2.5
@@ -24,5 +26,4 @@ gwcs==0.1.dev44
 pyregion==1.1.4
 astroML==0.3
 ginga==2.4.20150626080455
-emcee==2.1.0
 naima==0.5
