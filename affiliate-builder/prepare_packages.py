@@ -194,8 +194,16 @@ class Package(object):
 
         urls = self.client.release_urls(self.pypi_name, version)
         try:
-            url = urls[0]['url']
-            md5sum = urls[0]['md5_digest']
+            # Many packages now have wheels, need to iterate over download
+            # URLs to get the source distribution.
+            for a_url in urls:
+                if a_url['packagetype'] == 'sdist':
+                    url = a_url['url']
+                    md5sum = a_url['md5_digest']
+                    break
+            else:
+                # No source distribution, so raise an index error
+                raise IndexError
         except IndexError:
             # Apparently a pypi release isn't required to have any source?
             # If it doesn't, then return None
