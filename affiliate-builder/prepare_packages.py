@@ -18,6 +18,7 @@ from astropy.extern import six
 from astropy.extern.six.moves import xmlrpc_client as xmlrpclib
 
 from jinja2 import Environment, FileSystemLoader
+from jinja2.exceptions import TemplateNotFound
 
 from generate_initial_versions import get_pypi_info
 
@@ -160,24 +161,20 @@ class Package(object):
     @property
     def extra_meta(self):
         """
-        The 'extra' metadata, for now read in from a file separate from
-        meta.yaml.
+        The 'extra' metadata, for now read in from meta.yaml.
         """
         if self._extra_meta is not None:
             return self._extra_meta
 
         template_dir = os.path.join(TEMPLATE_FOLDER, self.conda_name)
 
-        # For now need to keep platform information in a separate YAML file.
-        # Will change in upcoming version of conda.
-        platform_file = os.path.join(template_dir, 'extra.yml')
         try:
-            with open(platform_file, 'r') as f:
-                platform_info = yaml.safe_load(f)
-        except IOError:
-            # No recipe, make an empty dict for now.
-            platform_info = {}
+            meta = render_template(self, 'meta.yaml')
+        except TemplateNotFound as e:
+            # No recipe, make an empty meta for now.
+            meta = ''
 
+        platform_info = yaml.safe_load(meta) if meta else {}
         self._extra_meta = platform_info
 
         return self._extra_meta
@@ -194,8 +191,16 @@ class Package(object):
 
         urls = self.client.release_urls(self.pypi_name, version)
         try:
-            url = urls[0]['url']
-            md5sum = urls[0]['md5_digest']
+            # Many packages now have wheels, need to iterate over download
+            # URLs to get the source distribution.
+            for a_url in urls:
+                if a_url['packagetype'] == 'sdist':
+                    url = a_url['url']
+                    md5sum = a_url['md5_digest']
+                    break
+            else:
+                # No source distribution, so raise an index error
+                raise IndexError
         except IndexError:
             # Apparently a pypi release isn't required to have any source?
             # If it doesn't, then return None
@@ -341,6 +346,25 @@ def write_build_order(build_bdist):
         f.writelines('\n'.join(names))
 
 
+def render_template(package, template):
+    """
+    Render recipe components from jinja2 templates.
+
+    Parameters
+    ----------
+
+    package : Package
+        :class:`Package` object for which template will be rendered.
+    template : str
+        Name of template file, path relative to ``TEMPLATE_FOLDER``.
+    """
+    full_template_path = os.path.abspath(TEMPLATE_FOLDER)
+    jinja_env = Environment(loader=FileSystemLoader(full_template_path))
+    tpl = jinja_env.get_template('/'.join([package.conda_name, template]))
+    rendered = tpl.render(version=package.required_version, md5=package.md5)
+    return rendered
+
+
 def main(args):
     packages = get_package_versions(args.requirements)
 
@@ -356,8 +380,6 @@ def main(args):
 
     if build_recipe:
         os.mkdir(RECIPE_FOLDER)
-        full_template_path = os.path.abspath(TEMPLATE_FOLDER)
-        jinja_env = Environment(loader=FileSystemLoader(full_template_path))
 
     # Write recipes from templates.
     for p in build_recipe:
@@ -367,9 +389,7 @@ def main(args):
         os.mkdir(recipe_path)
         templates = [d for d in os.listdir(template_path) if not d.startswith('.')]
         for template in templates:
-            tpl = jinja_env.get_template('/'.join([p.conda_name, template]))
-            rendered = tpl.render(version=p.required_version,
-                                  md5=p.md5)
+            rendered = render_template(p, template)
             with open(os.path.join(recipe_path, template), 'wt') as f:
                 f.write(rendered)
 

@@ -27,3 +27,4 @@ pyregion==1.1.4
 astroML==0.3
 ginga==2.4.20150626080455
 naima==0.5
+pyephem==3.7.6.0
