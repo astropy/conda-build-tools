@@ -12,12 +12,24 @@ env:
         - CONDA_INSTALL_LOCN="${HOME}/conda"
         # Defines BINSTAR_TOKEN for astropy binstar channel
         - secure: "c/MXanxumEXl7l3vXv4Bx5cCm9RBvz4bBDrAbzSf9SjqS5Xq5Fv0jbetExNKzgjKzGQ3rv8HYhpOeVabNxHEmqqI8rOl79J/L1ba0XClTIBbkeO/rM2HS0LuS95FSvx4+eeAm6m+5xVBAJW3EXVssRt56T3y69JJD0+2pEtbUCT7I88fnb1llWRcnJsZh5sB8qppklYIc1qxofcw8EiCIBwY1wHGwQ/Jq4n6VutAjEnIUaK6cX7XuO8mvyhYEcg2gww4qcSiMkb/8KcXl9t8fSshLC1tNTwLhmA4dUo0Dbgow0xtUNqzy3L/TEWhfj9hBhGijexhMSrLwMTAEgIxPNiAsrHv3EOgX2sd/UXQo+vZ96V35apfRzJrojtGQhgIEUc36tCNfH3GcnX7jWZfaPySqohZAsj/RFrFPVkhW64VcdCAyhHc3UBTy3odmiiMYkln+cXJ/G3+CENDNeR/5uwKYQ1Ez79J1KrBIXrRYBsEAR6VCbRZ/mu/ea7cSzLeo9lIu4uyiLhLLvCua4U0/YkTJFebdpR+YNDyNVNuYVXU3XQCHRhi5DbSiNWDL1O0IxKDaTdir4dIx3+UOJCdkdJbIYH17k52u9of/52KYxssVeFMj62QjYgGiFwdTSjX7hClL3LfcF63HcJNoEu0hvtavF3qMyeduoQixrRX/Ks="
+        - LATEST_GOOD_CONDA_BUILD="1.16.0"
 
     matrix:
         - CONDA_PY=27
           CONDA_NPY=19
+          CONDA_BUILD="=$LATEST_GOOD_CONDA_BUILD"
         - CONDA_PY=34
           CONDA_NPY=19
+          CONDA_BUILD="=$LATEST_GOOD_CONDA_BUILD"
+
+matrix:
+    fast_finish: true
+
+    allow_failures:
+        # Canary in the coal mine to check out new versions of conda-build
+        - os: linux
+        - env: CONDA_PY=27
+        - env: CONDA_BUILD=""  # selects latest version of conda-build
 
 install:
     # Install miniconda, always the version specified by CONDA_PY, because
@@ -28,7 +40,7 @@ install:
     - conda config --set always_yes true
     - conda update --quiet conda
     # Install a couple of dependencies we need for sure.
-    - conda install --quiet --yes astropy conda-build anaconda-client jinja2 cython
+    - conda install --quiet --yes astropy conda-build$CONDA_BUILD anaconda-client jinja2 cython
     - conda config --add channels astropy
     # Install obvious-ci; run 2to3 first if the build is python 3.
     - cd Obvious-CI; if [[ ${CONDA_PY::1} == 3 ]]; then 2to3 -w .; fi; python setup.py install; cd ..
