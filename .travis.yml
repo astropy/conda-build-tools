@@ -51,6 +51,8 @@ script:
     - if [[ -d recipes ]]; then obvci_conda_build_dir.py recipes astropy; fi
     # Build bdist_conda-based packages
     - if [[ -d bdist_conda ]]; then bash build_bdist.sh; fi
+    # Raise an exception if any of the packages are not built.
+    - python affiliate-builder/check_build_results.py
 
 after_success:
     # Upload to binstar...this should probably be done as the bdists are built.
