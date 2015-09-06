@@ -25,11 +25,13 @@ env:
 matrix:
     fast_finish: true
 
+    include:
+        - os: linux
+          env: CONDA_PY=27 CONDA_BUILD=""  # selects latest version of conda-build
+
     allow_failures:
         # Canary in the coal mine to check out new versions of conda-build
-        - os: linux
-        - env: CONDA_PY=27
-        - env: CONDA_BUILD=""  # selects latest version of conda-build
+        env: CONDA_PY=27 CONDA_BUILD=""  # selects latest version of conda-build
 
 install:
     # Install miniconda, always the version specified by CONDA_PY, because
