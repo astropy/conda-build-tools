@@ -9,7 +9,7 @@ iminuit==1.1.1
 emcee==2.1.0
 ## affiliated packages
 astropy-helpers==1.0.3
-astroquery==0.2.5
+astroquery==0.2.6
 sncosmo==1.1.0
 pydl==0.3.0
 montage-wrapper==0.9.8
