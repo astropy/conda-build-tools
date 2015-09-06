@@ -1,7 +1,7 @@
 # Packages to be built should be listed below with version.
 # Comments are only allowed on lines by themselves.
-# Packages will be built in the order listed below (roughly). See
-# docs for details.
+# Packages will be built in the order listed below (roughly).
+# See docs for details.
 ## Dependencies for astropy affiliates
 hgtools==6.3
 keyring==5.3
@@ -28,3 +28,4 @@ astroML==0.3
 ginga==2.4.20150626080455
 naima==0.5
 pyephem==3.7.6.0
+reproject==0.1
