@@ -170,7 +170,7 @@ class Package(object):
 
         # For now need to keep platform information in a separate YAML file.
         # Will change in upcoming version of conda.
-        platform_file = os.path.join(template_dir, 'extra.yml')
+        platform_file = os.path.join(template_dir, 'meta.yml')
         try:
             with open(platform_file, 'r') as f:
                 platform_info = yaml.safe_load(f)
