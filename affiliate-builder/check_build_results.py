@@ -53,7 +53,11 @@ def main(recipe_dir, bdist_conda_dir):
         Directory which, if it exists, has a subdirectory for each package to
         be built with ``setup.py bdist_conda``
     """
-    built_packages = os.listdir(config.config.bldpkgs_dir)
+    try:
+        built_packages = os.listdir(config.config.bldpkgs_dir)
+    except OSError:
+        # No packages were built.
+        built_packages = []
 
     try:
         recipes = os.listdir(recipe_dir)
