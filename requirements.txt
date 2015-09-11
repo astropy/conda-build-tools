@@ -29,3 +29,4 @@ ginga==2.4.20150626080455
 naima==0.5
 pyephem==3.7.6.0
 reproject==0.1
+astroplan==0.1
