@@ -17,21 +17,21 @@ env:
     matrix:
         - CONDA_PY=27
           CONDA_NPY=19
-          CONDA_BUILD="=$LATEST_GOOD_CONDA_BUILD"
+          CONDA_BUILD_VERSION="=$LATEST_GOOD_CONDA_BUILD"
         - CONDA_PY=34
           CONDA_NPY=19
-          CONDA_BUILD="=$LATEST_GOOD_CONDA_BUILD"
+          CONDA_BUILD_VERSION="=$LATEST_GOOD_CONDA_BUILD"
 
 matrix:
     fast_finish: true
 
     include:
         - os: linux
-          env: CONDA_PY=27 CONDA_BUILD=""  # selects latest version of conda-build
+          env: CONDA_PY=27 CONDA_BUILD_VERSION=""  # selects latest version of conda-build
 
     allow_failures:
         # Canary in the coal mine to check out new versions of conda-build
-        - env: CONDA_PY=27 CONDA_BUILD=""  # selects latest version of conda-build
+        - env: CONDA_PY=27 CONDA_BUILD_VERSION=""  # selects latest version of conda-build
 
 install:
     # Install miniconda, always the version specified by CONDA_PY, because
@@ -42,7 +42,7 @@ install:
     - conda config --set always_yes true
     - conda update --quiet conda
     # Install a couple of dependencies we need for sure.
-    - conda install --quiet --yes astropy conda-build$CONDA_BUILD anaconda-client jinja2 cython
+    - conda install --quiet --yes astropy conda-build$CONDA_BUILD_VERSION anaconda-client jinja2 cython pycrypto
     - conda config --add channels astropy
     # Install obvious-ci; run 2to3 first if the build is python 3.
     - cd Obvious-CI; if [[ ${CONDA_PY::1} == 3 ]]; then 2to3 -w .; fi; python setup.py install; cd ..
