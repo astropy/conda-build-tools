@@ -8,7 +8,7 @@ for d in $to_build
     do
         cd $d
         # Try --offline in case astropy-helpers bootstrap conflicts with conda's shutdown of downloads.
-        python setup.py bdist_conda || python setup.py bdist_conda --offline || echo "Failed on $PWD"
+        python setup.py bdist_conda || echo "Failed on $PWD"
         cd ..
     done
 

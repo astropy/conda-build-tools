@@ -25,7 +25,7 @@ imexam==0.5.2
 gwcs==0.1.dev44
 pyregion==1.1.4
 astroML==0.3
-ginga==2.4.20150626080455
+ginga==2.5.20150912012456
 naima==0.6
 pyephem==3.7.6.0
 reproject==0.1
