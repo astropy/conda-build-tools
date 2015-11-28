@@ -1,5 +1,5 @@
-from __future__ import (division, print_function, absolute_import,
-                        unicode_literals)
+from __future__ import (division, print_function, absolute_import)
+
 
 from argparse import ArgumentParser
 import os
@@ -29,6 +29,7 @@ TEMPLATE_FOLDER = 'recipe_templates'
 RECIPE_FOLDER = 'recipes'
 BUILD_ORDER = 'build_order.txt'
 ALL_PLATFORMS = ['osx-64', 'linux-64', 'linux-32', 'win-32', 'win-64']
+
 
 def setup_yaml():
     """
