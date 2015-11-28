@@ -6,6 +6,7 @@ import os
 import re
 import hashlib
 import subprocess
+from collections import OrderedDict
 
 import yaml
 
@@ -29,6 +30,19 @@ RECIPE_FOLDER = 'recipes'
 BUILD_ORDER = 'build_order.txt'
 ALL_PLATFORMS = ['osx-64', 'linux-64', 'linux-32', 'win-32', 'win-64']
 
+def setup_yaml():
+    """
+    Enable yaml to serialize an OrderedDict as a mapping.
+
+    Cut and paste directly from: http://stackoverflow.com/a/31605131
+
+    It in turn was condensed version of: http://stackoverflow.com/a/8661021
+    """
+    represent_dict_order = lambda self, data:  \
+        self.represent_mapping('tag:yaml.org,2002:map', data.items())
+    yaml.add_representer(OrderedDict, represent_dict_order)
+
+
 class Package(object):
     """
     A package to be built for conda.
@@ -49,7 +63,8 @@ class Package(object):
 
     def __init__(self, pypi_name, version=None,
                  numpy_compiled_extensions=False,
-                 astropy_helpers=False):
+                 astropy_helpers=False,
+                 python_requirements=None):
         self._pypi_name = pypi_name
         self.required_version = version
         self._build = False
@@ -60,6 +75,7 @@ class Package(object):
         self._build_pythons = None
         self._numpy_compiled_extensions = numpy_compiled_extensions
         self._astropy_helpers = astropy_helpers
+        self._python_requirements = python_requirements
 
     @property
     def pypi_name(self):
@@ -107,6 +123,10 @@ class Package(object):
     @property
     def astropy_helpers(self):
         return self._astropy_helpers
+
+    @property
+    def python_requirements(self):
+        return self._python_requirements
 
     @property
     def is_dev(self):
@@ -271,10 +291,12 @@ def get_package_versions(requirements_path):
     for p in package_list:
         helpers = p.get('astropy_helpers', False)
         numpy_extensions = p.get('numpy_compiled_extensions', False)
+        python_requirements = p.get('python', [])
         packages.append(Package(p['name'],
                                 version=p['version'],
                                 astropy_helpers=helpers,
-                                numpy_compiled_extensions=numpy_extensions))
+                                numpy_compiled_extensions=numpy_extensions,
+                                python_requirements=python_requirements))
 
     return packages
 
@@ -406,6 +428,18 @@ def generate_skeleton(package, path):
                           additional_arguments)
 
 
+def inject_python_requirements(package, recipe_path):
+    meta_path = os.path.join(recipe_path, 'meta.yaml')
+    with open(meta_path) as f:
+        recipe = yaml.safe_load(f)
+    python_spec = ' '.join(['python', package.python_requirements])
+    for section in ['build', 'run']:
+        recipe['requirements'][section].append(python_spec)
+
+    with open(meta_path, 'w') as f:
+        yaml.dump(recipe, f, default_flow_style=False)
+
+
 def main(args):
     packages = get_package_versions(args.requirements)
 
@@ -433,6 +467,8 @@ def main(args):
     for p in build_skeleton:
         recipe_destination = os.path.join(RECIPE_FOLDER, p.conda_name)
         generate_skeleton(p, RECIPE_FOLDER)
+        if p.python_requirements:
+            inject_python_requirements(p, recipe_destination)
 
 
 if __name__ == '__main__':
