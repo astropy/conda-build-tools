@@ -5,8 +5,7 @@ from argparse import ArgumentParser
 import os
 import re
 import hashlib
-import tarfile
-import zipfile
+import subprocess
 
 import yaml
 
@@ -48,7 +47,9 @@ class Package(object):
     # The class should only need one client for communicating with PyPI
     client = xmlrpclib.ServerProxy(PYPI_XMLRPC)
 
-    def __init__(self, pypi_name, version=None):
+    def __init__(self, pypi_name, version=None,
+                 numpy_compiled_extensions=False,
+                 astropy_helpers=False):
         self._pypi_name = pypi_name
         self.required_version = version
         self._build = False
@@ -57,6 +58,8 @@ class Package(object):
         self._build_platforms = None
         self._extra_meta = None
         self._build_pythons = None
+        self._numpy_compiled_extensions = numpy_compiled_extensions
+        self._astropy_helpers = astropy_helpers
 
     @property
     def pypi_name(self):
@@ -82,7 +85,7 @@ class Package(object):
 
     @required_version.setter
     def required_version(self, value):
-        self._required_version = value.strip()
+        self._required_version = str(value).strip()
 
     @property
     def build(self):
@@ -96,6 +99,14 @@ class Package(object):
     def build(self, value):
         # TODO: Make sure this is a bool
         self._build = value
+
+    @property
+    def numpy_compiled_extensions(self):
+        return self._numpy_compiled_extensions
+
+    @property
+    def astropy_helpers(self):
+        return self._astropy_helpers
 
     @property
     def is_dev(self):
@@ -254,15 +265,16 @@ def get_package_versions(requirements_path):
         List of ``Package`` objects, one for each in the requirements file.
     """
     with open(requirements_path, 'rt') as f:
-        # The requirements file is small, read it all in.
-        package_list = f.readlines()
+        package_list = yaml.safe_load(f)
 
     packages = []
     for p in package_list:
-        if p.startswith('#'):
-            continue
-        name, version = p.split('==')
-        packages.append(Package(name, version=version))
+        helpers = p.get('astropy_helpers', False)
+        numpy_extensions = p.get('numpy_compiled_extensions', False)
+        packages.append(Package(p['name'],
+                                version=p['version'],
+                                astropy_helpers=helpers,
+                                numpy_compiled_extensions=numpy_extensions))
 
     return packages
 
@@ -365,20 +377,44 @@ def render_template(package, template):
     return rendered
 
 
+def generate_skeleton(package, path):
+    """
+    Use conda skeleton pypi to generate a recipe for a package and
+    save it to path.
+
+    Parameters
+    ----------
+
+    package: Package
+        The package for which a recipe is to be generated.
+
+    path: str
+        Path to which the recipe should be written.
+    """
+
+    additional_arguments = ['--version', str(package.required_version),
+                            '--output-dir', path]
+
+    if package.astropy_helpers:
+        additional_arguments.extend(['--skeleton-setup-options', 'offline'])
+        additional_arguments.extend(['--recipe-setup-options', 'offline'])
+
+    if package.numpy_compiled_extensions:
+        additional_arguments.append('--pin-numpy')
+
+    subprocess.check_call(["conda", "skeleton", "pypi", package.pypi_name] +
+                          additional_arguments)
+
+
 def main(args):
     packages = get_package_versions(args.requirements)
 
-    to_build = construct_build_list(packages, conda_channel='astropy')
-
     needs_recipe = os.listdir(TEMPLATE_FOLDER)
 
-    build_recipe = [p for p in to_build if p.conda_name in needs_recipe]
-    build_bdist = [p for p in to_build if p.conda_name not in needs_recipe]
+    build_recipe = [p for p in packages if p.conda_name in needs_recipe]
+    build_skeleton = [p for p in packages if p.conda_name not in needs_recipe]
 
-    if build_bdist:
-        os.mkdir(BDIST_CONDA_FOLDER)
-
-    if build_recipe:
+    if build_recipe or build_skeleton:
         os.mkdir(RECIPE_FOLDER)
 
     # Write recipes from templates.
@@ -393,24 +429,10 @@ def main(args):
             with open(os.path.join(recipe_path, template), 'wt') as f:
                 f.write(rendered)
 
-    write_build_order(build_bdist)
-
-    # Download and unpack source for all bdist_conda builds.
-    for p in build_bdist:
-        p.download(BDIST_CONDA_FOLDER)
-        source_archive = os.path.join(BDIST_CONDA_FOLDER, p.filename)
-        source_destination = os.path.join(BDIST_CONDA_FOLDER,
-                                          p.conda_name)
-        try:
-            with tarfile.open(source_archive) as archive:
-                archive.extractall(BDIST_CONDA_FOLDER)
-            extracted_name = source_archive.strip('.tar.gz')
-        except tarfile.ReadError:
-            with zipfile.ZipFile(source_archive) as archive:
-                archive.extractall(BDIST_CONDA_FOLDER)
-            extracted_name = source_archive.strip('.zip')
-        os.rename(extracted_name, source_destination)
-        os.remove(source_archive)
+    # Use conda skeleton to generate recipes for the simple cases
+    for p in build_skeleton:
+        recipe_destination = os.path.join(RECIPE_FOLDER, p.conda_name)
+        generate_skeleton(p, RECIPE_FOLDER)
 
 
 if __name__ == '__main__':
