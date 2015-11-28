@@ -1,3 +1,5 @@
+# astroml has no dependencies listed in setup.py, so need recipe.
+
 package:
   name: astroml
   version: "{{version}}"

@@ -1,3 +1,8 @@
+# Need recipe because import tests must be skipped...they fail unless montage
+# is installed.
+#
+# Also, astropy is a build requirement but is not listed as such.
+
 package:
   name: montage-wrapper
   version: "{{version}}"

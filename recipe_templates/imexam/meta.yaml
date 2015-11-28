@@ -1,3 +1,6 @@
+# Need recipe because astropy-helpers is not included as submodule and need
+# to patch setup configuration to avoid trying to update astropy-helpers
+
 package:
   name: imexam
   version: "{{version}}"

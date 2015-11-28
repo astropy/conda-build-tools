@@ -1,3 +1,5 @@
+# Need recipe to patch on Windows + python 3
+
 package:
   name: ginga
   version: "{{version}}"
