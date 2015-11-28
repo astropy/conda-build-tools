@@ -30,14 +30,16 @@ source:
 requirements:
   build:
     - python
+    - python >=2.6|>=3.3
 
   run:
     - python
-    - numpy
-    - scipy
-    - matplotlib
-    - scikit-learn
-    - astropy
+    - python >=2.6|>=3.3
+    - numpy >=1.4
+    - scipy >=0.7
+    - matplotlib >=0.99
+    - scikit-learn >=0.10
+    - astropy >=0.2.5
 
 test:
   # Python imports
