@@ -68,8 +68,8 @@ extra:
     #     - linux-64
     # List of python versions (in CONDA_PY format) for which this package
     # should be built.
-    pythons:
-        - 27
+    # pythons:
+    #     - 27
 # See
 # http://docs.continuum.io/conda/build.html for
 # more information about meta.yaml
