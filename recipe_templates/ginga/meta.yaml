@@ -29,11 +29,13 @@ source:
 requirements:
   build:
     - python
+    - python >2.6
     - setuptools
     - numpy >=1.7
 
   run:
     - python
+    - python >2.6
     - numpy >=1.7
 
 test:

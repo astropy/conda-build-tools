@@ -29,9 +29,11 @@ source:
 requirements:
   build:
     - python
+    - python <3
 
   run:
     - python
+    - python <3
 
 test:
   # Python imports
