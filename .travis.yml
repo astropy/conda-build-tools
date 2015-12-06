@@ -15,6 +15,7 @@ env:
         - LATEST_GOOD_CONDA_BUILD="1.16.0"
         - BUILDER_PYTHON_VERSION="2"
         - CONDA_PY=27
+        - PYTHON_BUILD_RESTRICTIONS=">2.6"
 
 matrix:
     fast_finish: true
@@ -40,8 +41,9 @@ install:
     - cd conda-build; python setup.py install; cd ..
     # Install obvious-ci; run 2to3 first if the build is python 3.
     - cd Obvious-CI; if [[ $BUILDER_PYTHON_VERSION == 3 ]]; then 2to3 -w .; fi; python setup.py install; cd ..
-    # Add python build restrictions if needed
-    - if defined PYTHON_BUILD_RESTRICTIONS; then PYTHON_RESTRICTIONS="--build-condition python $PYTHON_BUILD_RESTRICTIONS"; else PYTHON_RESTRICTIONS=""; fi
+    # Add python build restrictions if needed. Need quotes around the argument
+    # for this to work.
+    - if [ -n "$PYTHON_BUILD_RESTRICTIONS" ]; then PYTHON_RESTRICTIONS="--build-condition \"python $PYTHON_BUILD_RESTRICTIONS\""; else PYTHON_RESTRICTIONS=""; fi
 
 script:
     # Get ready to build.
