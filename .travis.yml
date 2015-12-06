@@ -43,7 +43,7 @@ install:
     - cd Obvious-CI; if [[ $BUILDER_PYTHON_VERSION == 3 ]]; then 2to3 -w .; fi; python setup.py install; cd ..
     # Add python build restrictions if needed. Need quotes around the argument
     # for this to work.
-    - if [ -n "$PYTHON_BUILD_RESTRICTIONS" ]; then PYTHON_RESTRICTIONS="--build-condition \"python $PYTHON_BUILD_RESTRICTIONS\""; else PYTHON_RESTRICTIONS=""; fi
+    - if [ -n "$PYTHON_BUILD_RESTRICTIONS" ]; then PYTHON_RESTRICTIONS="--build-condition=\"python $PYTHON_BUILD_RESTRICTIONS\""; else PYTHON_RESTRICTIONS=""; fi
 
 script:
     # Get ready to build.
