@@ -419,8 +419,7 @@ def generate_skeleton(package, path):
                             '--output-dir', path]
 
     if package.astropy_helpers:
-        additional_arguments.extend(['--skeleton-setup-options', 'offline'])
-        additional_arguments.extend(['--recipe-setup-options', 'offline'])
+        additional_arguments.extend(['--setup-options=--offline'])
 
     if package.numpy_compiled_extensions:
         additional_arguments.append('--pin-numpy')
