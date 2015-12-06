@@ -38,7 +38,7 @@ install:
     # options to setup.py)
     - cmd: cd conda-build & python setup.py install & cd ..
     # Install obvious-ci; run 2to3 first if the build is done on python 3.
-    - cmd: cd Obvious-CI & (if %APPVEYOR_PYTHON_VERSION%==3 2to3 -w .) & python setup.py install & cd ..
+    - cmd: cd Obvious-CI & (if %BUILDER_PYTHON_VERSION%==3 2to3 -w .) & python setup.py install & cd ..
     - cmd: if defined PYTHON_BUILD_RESTRICTIONS (set PYTHON_RESTRICTIONS="--build-condition python %PYTHON_BUILD_RESTRICTIONS%") else (set PYTHON_RESTRICTIONS="")
 
 # Skip .NET project specific build phase.
