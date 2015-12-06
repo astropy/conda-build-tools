@@ -48,7 +48,8 @@ install:
 script:
     # Get ready to build.
     - python affiliate-builder/prepare_packages.py requirements.yml
-    - if [[ -d recipes ]]; then obvci_conda_build_dir $PYTHON_RESTRICTIONS recipes astropy; fi
+    - echo $PYTHON_RESTRICTIONS
+    - if [[ -d recipes ]]; then obvci_conda_build_dir "$PYTHON_RESTRICTIONS" recipes astropy; fi
     # Right now fails happen immediately on trying to build.
     # Raise an exception if any of the packages are not built.
     # - python affiliate-builder/check_build_results.py
