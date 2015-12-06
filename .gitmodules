@@ -1,3 +1,6 @@
 [submodule "Obvious-CI"]
 	path = Obvious-CI
 	url = https://github.com/pelson/Obvious-CI.git
+[submodule "conda-build"]
+	path = conda-build
+	url = https://github.com/mwcraig/conda-build.git
