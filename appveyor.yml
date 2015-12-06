@@ -36,7 +36,7 @@ install:
     - cmd: conda install --quiet astropy anaconda-client jinja2 cython
     # Install custom version of conda-build for now (need to be able to pass
     # options to setup.py)
-    - cmd: cd conda-build; python setup.py install; cd ..
+    - cmd: cd conda-build & python setup.py install & cd ..
     # Install obvious-ci; run 2to3 first if the build is done on python 3.
     - cmd: cd Obvious-CI & (if %APPVEYOR_PYTHON_VERSION%==3 2to3 -w .) & python setup.py install & cd ..
     - cmd: if defined PYTHON_BUILD_RESTRICTIONS (set PYTHON_RESTRICTIONS="--build-condition python %PYTHON_BUILD_RESTRICTIONS%") else (set PYTHON_RESTRICTIONS="")
@@ -46,7 +46,7 @@ build: off
 
 test_script:
     - "%CMD_IN_ENV% python affiliate-builder\\prepare_packages.py requirements.yml"
-    - if exist recipes %CMD_IN_ENV% python %CONDA_INSTALL_LOCN%\Scripts\obvci_conda_build_dir.py %PYTHON_RESTRICTIONS% recipes astropy
+    - if exist recipes %CMD_IN_ENV% python %CONDA_INSTALL_LOCN%\Scripts\obvci_conda_build_dir %PYTHON_RESTRICTIONS% recipes astropy
     # Right now fails happen immediately on trying to build.
     # - python affiliate-builder\\check_build_results.py
 
