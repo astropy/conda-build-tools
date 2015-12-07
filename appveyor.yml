@@ -35,6 +35,7 @@ install:
     - cmd: conda update --quiet conda
     - cmd: conda config --add channels astropy
     - cmd: conda install --quiet astropy anaconda-client jinja2 cython
+    - cmd: conda install patch
     # Install custom version of conda-build for now (need to be able to pass
     # options to setup.py)
     - cmd: cd conda-build & python setup.py install & cd ..
@@ -46,6 +47,8 @@ install:
 build: off
 
 test_script:
+    - conda skeleton
+    - conda skeleton pypi keyring
     - "%CMD_IN_ENV% python affiliate-builder\\prepare_packages.py requirements.yml"
     - if exist recipes %CMD_IN_ENV% python %CONDA_INSTALL_LOCN%\Scripts\obvci_conda_build_dir %PYTHON_RESTRICTIONS% recipes astropy
     # Right now fails happen immediately on trying to build.
