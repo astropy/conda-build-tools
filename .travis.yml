@@ -15,7 +15,10 @@ env:
         - LATEST_GOOD_CONDA_BUILD="1.16.0"
         - BUILDER_PYTHON_VERSION="2"
         - CONDA_PY=27
-        - PYTHON_BUILD_RESTRICTIONS=">2.6"
+        # The python build restriction MUST be set at the moment, though it
+        # can have any value. The setting below avoids known-bad builds on
+        # python 2.6 and 3.3 for some packages.
+        - PYTHON_BUILD_RESTRICTIONS="2.7*|>=3.4"
 
 matrix:
     fast_finish: true
@@ -41,15 +44,12 @@ install:
     - cd conda-build; python setup.py install; cd ..
     # Install obvious-ci; run 2to3 first if the build is python 3.
     - cd Obvious-CI; if [[ $BUILDER_PYTHON_VERSION == 3 ]]; then 2to3 -w .; fi; python setup.py install; cd ..
-    # Add python build restrictions if needed. Need quotes around the argument
-    # for this to work.
-    - if [ -n "$PYTHON_BUILD_RESTRICTIONS" ]; then PYTHON_RESTRICTIONS="--build-condition=\"python $PYTHON_BUILD_RESTRICTIONS\""; else PYTHON_RESTRICTIONS=""; fi
 
 script:
     # Get ready to build.
     - python affiliate-builder/prepare_packages.py requirements.yml
     - echo $PYTHON_RESTRICTIONS
-    - if [[ -d recipes ]]; then obvci_conda_build_dir "$PYTHON_RESTRICTIONS" recipes astropy; fi
+    - if [[ -d recipes ]]; then obvci_conda_build_dir  recipes astropy; fi
     # Right now fails happen immediately on trying to build.
     # Raise an exception if any of the packages are not built.
     # - python affiliate-builder/check_build_results.py
