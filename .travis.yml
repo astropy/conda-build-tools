@@ -38,6 +38,8 @@ install:
     - conda update --quiet conda
     # Install a couple of dependencies we need for sure.
     - conda install --quiet --yes astropy anaconda-client jinja2 cython pycrypto
+    # Remove the patchelf install below if we go back to continuum-provided conda-build
+    - if [ $TRAVIS_OS_NAME == "linux" ]; then conda install patchelf; fi
     - conda config --add channels astropy
     # Install custom version of conda-build for now (need to be able to pass
     # options to setup.py)
