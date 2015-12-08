@@ -268,6 +268,14 @@ class Package(object):
                 raise ValueError('checksum mismatch '
                                  'in {}'.format(self.filename))
 
+    @property
+    def supported_platform(self):
+        """
+        True if the current build platform is supported by the package, False
+        otherwise.
+        """
+        return config.subdir in self.build_platforms
+
 
 def get_package_versions(requirements_path):
     """
@@ -369,14 +377,6 @@ def construct_build_list(packages, conda_channel=None):
         print(build_message)
 
     return [p for p in packages if p.build]
-
-    @property
-    def supported_platform(self):
-        """
-        True if the current build platform is supported by the package, False
-        otherwise.
-        """
-        return config.subdir in package.build_platforms
 
 
 def write_build_order(build_bdist):
