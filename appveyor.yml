@@ -10,7 +10,7 @@ environment:
   CONDA_PY: "27"  # only determines apveyor environment.
   # Python version restrictions that should apply to all builds regardless
   # of any package-specific version restrictions
-  PYTHON_BUILD_RESTRICTIONS: ">2.6"
+  PYTHON_BUILD_RESTRICTIONS: "2.7*|>=3.4"
 
   BINSTAR_TOKEN:
     secure: eNFZ6uLsFUgtwjXf6n/vayT97T4sSX1nG3iv8Hfp2vWKIZJIQ6jmCeL/agYmnbiX
