@@ -51,7 +51,7 @@ build: off
 
 test_script:
     - "%CMD_IN_ENV% python affiliate-builder\\prepare_packages.py requirements.yml"
-    - if exist recipes %CMD_IN_ENV% python %CONDA_INSTALL_LOCN%\Scripts\obvci_conda_build_dir.py %PYTHON_RESTRICTIONS% recipes astropy
+    - if exist recipes %CMD_IN_ENV% obvci_conda_build_dir %PYTHON_RESTRICTIONS% recipes astropy
     # Right now fails happen immediately on trying to build.
     # - python affiliate-builder\\check_build_results.py
 
