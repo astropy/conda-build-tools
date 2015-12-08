@@ -370,6 +370,14 @@ def construct_build_list(packages, conda_channel=None):
 
     return [p for p in packages if p.build]
 
+    @property
+    def supported_platform(self):
+        """
+        True if the current build platform is supported by the package, False
+        otherwise.
+        """
+        return config.subdir in package.build_platforms
+
 
 def write_build_order(build_bdist):
     """
@@ -442,6 +450,8 @@ def inject_python_requirements(package, recipe_path):
 
 def main(args):
     packages = get_package_versions(args.requirements)
+
+    packages = [p for p in packages if p.supported_platform]
 
     needs_recipe = os.listdir(TEMPLATE_FOLDER)
 
