@@ -35,7 +35,8 @@ install:
     - cmd: conda update --quiet conda
     - cmd: conda config --add channels astropy
     - cmd: conda install --quiet astropy anaconda-client jinja2 cython
-    - cmd: conda install patch
+    # These installs are needed on windows but not other platforms.
+    - cmd: conda install patch psutil
     # Install custom version of conda-build for now (need to be able to pass
     # options to setup.py)
     # Instead of building from source -- which does not seem to create
