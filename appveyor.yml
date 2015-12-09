@@ -16,10 +16,20 @@ environment:
     secure: eNFZ6uLsFUgtwjXf6n/vayT97T4sSX1nG3iv8Hfp2vWKIZJIQ6jmCeL/agYmnbiX
 
   matrix:
-    # Vast matrix simplification because python/numpy combinations are handled
-    # by Obvious-CI now.
+    # Unfortunately, compiler/SDK configuration for 64 bit builds depends on
+    # python version. Right now conda build does not configure the SDK, and
+    # the appveyor setup only sets up the SDK once, so separate by python
+    # versions.
     - TARGET_ARCH: "x64"
+      PYTHON_BUILD_RESTRICTIONS: "2.7*"
+    - TARGET_ARCH: "x64"
+      PYTHON_BUILD_RESTRICTIONS: "3.4*"
+    - TARGET_ARCH: "x64"
+      PYTHON_BUILD_RESTRICTIONS: "3.5*"
+    # For 32 bit builds there are no compiler issues, let Obvious-CI
+    # handle the matrix
     - TARGET_ARCH: "x86"
+      PYTHON_BUILD_RESTRICTIONS: "2.7*|>=3.4"
 
 # We always use a 64-bit machine, but can build x86 distributions
 # with the TARGET_ARCH variable.
