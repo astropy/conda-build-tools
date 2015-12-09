@@ -130,6 +130,7 @@
   numpy_compiled_extensions: false
   python: '>2.6'
 
+# naima has a recipe template
 - name: naima
   version: '0.6'
   astropy_helpers: true
