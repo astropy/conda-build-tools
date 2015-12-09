@@ -1,6 +1,6 @@
 #!/bin/bash
 
-$PYTHON setup.py install --offline --single-version-externally-managed -record=junk.txt
+$PYTHON setup.py install --offline --single-version-externally-managed --record=junk.txt
 
 # Add more build steps here, if they are necessary.
 

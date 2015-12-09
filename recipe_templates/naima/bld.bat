@@ -1,4 +1,4 @@
-"%PYTHON%" setup.py install --offline --single-version-externally-managed -record=junk.txt
+"%PYTHON%" setup.py install --offline --single-version-externally-managed --record=junk.txt
 if errorlevel 1 exit 1
 
 :: Add more build steps here, if they are necessary.
