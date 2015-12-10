@@ -28,8 +28,8 @@ environment:
       PYTHON_BUILD_RESTRICTIONS: "3.5*"
     # For 32 bit builds there are no compiler issues, let Obvious-CI
     # handle the matrix
-    - TARGET_ARCH: "x86"
-      PYTHON_BUILD_RESTRICTIONS: "2.7*|>=3.4"
+    # - TARGET_ARCH: "x86"
+    #   PYTHON_BUILD_RESTRICTIONS: "2.7*|>=3.4"
 
 # We always use a 64-bit machine, but can build x86 distributions
 # with the TARGET_ARCH variable.
