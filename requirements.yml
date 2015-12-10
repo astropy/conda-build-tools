@@ -58,7 +58,7 @@
   numpy_compiled_extensions: false
 
 - name: ccdproc
-  version: 0.3.1
+  version: 0.3.3
   astropy_helpers: true
   numpy_compiled_extensions: false
 
@@ -132,7 +132,7 @@
 
 # naima has a recipe template
 - name: naima
-  version: '0.6'
+  version: '0.6.1'
   astropy_helpers: true
   numpy_compiled_extensions: false
 
