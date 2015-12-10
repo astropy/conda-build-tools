@@ -42,7 +42,7 @@
 
 # sncosmo has a recipe template
 - name: sncosmo
-  version: 1.1.0
+  version: 1.2.0
   astropy_helpers: true
   numpy_compiled_extensions: false
 
