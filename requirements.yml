@@ -1,0 +1,151 @@
+- name: hgtools
+  version: '6.3'
+
+# keyring has a recipe template
+- name: keyring
+  version: '5.3'
+
+- name: iminuit
+  version: 1.1.1
+  numpy_compiled_extensions: true
+  python: '<3'
+
+- name: emcee
+  version: 2.1.0
+
+# astropy-helpers has a recipe template
+- name: astropy-helpers
+  version: 1.0.3
+
+- name: astroquery
+  # Version should match the version on PyPI. Versions that could be
+  # interpereted as numbers (e.g. 0.1) should be enclosed in quotes.
+  version: 0.2.6
+
+  # conda builds disable downloading, but astropy-helpers is typically
+  # configured to try to autoupdate during install of affiliated
+  # packages. Set to true if the package uses astropy-helpers and
+  # auto-update and the --offline flag will be passed to setup.py.
+  astropy_helpers: true   # Defaults to false if omitted.
+
+  # If the package contains compiled extensions that link to numpy this
+  # must be set to true to ensure the package is built properly.
+  # If in doubt, set it to true...though it should *always* be false
+  # for a pure python package.
+  numpy_compiled_extensions: false   # Defaults to false if omitted.
+
+  # Some packages can only be built for specific versions of python but
+  # setup.py often does not contain those restrictions (and conda skeleton
+  # ignores it if present), so list restrictions on python version here.
+
+  # python: '>2.6|>=3.4'  # if omitted, no restriction on python builds.
+
+# sncosmo has a recipe template
+- name: sncosmo
+  version: 1.1.0
+  astropy_helpers: true
+  numpy_compiled_extensions: false
+
+- name: pydl
+  version: 0.3.0
+  astropy_helpers: true
+  numpy_compiled_extensions: false
+
+# montage-wrapper has a recipe template
+- name: montage-wrapper
+  version: 0.9.8
+  astropy_helpers: true
+  numpy_compiled_extensions: false
+
+- name: ccdproc
+  version: 0.3.3
+  astropy_helpers: true
+  numpy_compiled_extensions: false
+
+- name: wcsaxes
+  version: '0.6'
+  astropy_helpers: true
+  numpy_compiled_extensions: false
+
+- name: gammapy
+  version: '0.3'
+  astropy_helpers: true
+  numpy_compiled_extensions: false
+
+# Fails because its astropy helpers is ancient/tries to import astropy???
+# - name: pyvo
+#   version: 0.0beta2
+#   astropy_helpers: true
+#   numpy_compiled_extensions: false
+
+- name: photutils
+  version: '0.1'
+  astropy_helpers: true
+  numpy_compiled_extensions: false
+
+# Still has no source on pypi....
+# - name: spherical-geometry
+#   version: 1.0.4
+#   astropy_helpers: true
+#   numpy_compiled_extensions: false
+
+# APLpy currently has a recipe template
+- name: APLpy
+  version: '1.0'
+  astropy_helpers: true
+
+- name: specutils
+  version: '0.1'
+  astropy_helpers: true
+  numpy_compiled_extensions: false
+
+# imexam has a recipe template
+- name: imexam
+  version: 0.5.2
+  astropy_helpers: true
+  numpy_compiled_extensions: false
+  python: '>2.6,<3'
+
+# Chokes on no source
+# - name: gwcs
+#   version: 0.1.dev44
+#   astropy_helpers: true
+#   numpy_compiled_extensions: true
+
+# pyregion has a recipe template
+- name: pyregion
+  version: 1.1.4
+  astropy_helpers: true
+  numpy_compiled_extensions: true
+
+# astroML has a recipe template
+- name: astroML
+  version: '0.3'
+  python: '>=2.6|>=3.3'
+
+# ginga has a recipe template
+- name: ginga
+  version: 2.5.20151112204702
+  astropy_helpers: true
+  numpy_compiled_extensions: false
+  python: '>2.6'
+
+# naima has a recipe template
+- name: naima
+  version: '0.6.1'
+  astropy_helpers: true
+  numpy_compiled_extensions: false
+
+- name: pyephem
+  version: 3.7.6.0
+
+# reproject has a recipe template
+- name: reproject
+  version: '0.1'
+  astropy_helpers: true
+  numpy_compiled_extensions: false
+
+- name: astroplan
+  version: '0.1'
+  astropy_helpers: true
+  numpy_compiled_extensions: false

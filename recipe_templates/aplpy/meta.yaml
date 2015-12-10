@@ -1,29 +1,27 @@
-# Need recipe because import tests must be skipped...they fail unless montage
-# is installed.
-#
-# Also, astropy is a build requirement but is not listed as such.
+# matplotlib should be listed as a dependency and it isn't (fails on import without it)
 
 package:
-  name: montage-wrapper
+  name: aplpy
   version: "{{version}}"
 
 source:
-  fn: montage-wrapper-{{version}}.tar.gz
-  url: https://pypi.python.org/packages/source/m/montage-wrapper/montage-wrapper-{{version}}.tar.gz
+  fn: APLpy-{{version}}.tar.gz
+  url: https://pypi.python.org/packages/source/A/APLpy/APLpy-{{version}}.tar.gz
   md5: {{md5}}
 #  patches:
    # List any patch files here
    # - fix.patch
 
 # build:
+  # noarch_python: True
   # preserve_egg_dir: True
   # entry_points:
     # Put any entry points (scripts to be generated automatically) here. The
     # syntax is module:function.  For example
     #
-    # - astroml = astroml:main
+    # - aplpy = aplpy:main
     #
-    # Would create an entry point called astroml that calls astroml.main()
+    # Would create an entry point called aplpy that calls aplpy.main()
 
 
   # If this is a new build for the same version, increment the build
@@ -33,19 +31,19 @@ source:
 requirements:
   build:
     - python
-    - astropy  # TODO Can be removed in next version of montage-wrapper
+    - setuptools
+    - astropy
 
   run:
     - python
     - astropy
+    - matplotlib
 
-## SKIP TESTS BECAUSE the only import, of montage-wrapper, will fail if
-## montage is not installed.
-
-# test:
-#   # Python imports
-#   imports:
-#     - montage_wrapper
+test:
+  # Python imports
+  imports:
+    - aplpy
+    - aplpy.tests
 
   # commands:
     # You can put test commands to be run here.  Use this to test that the
@@ -60,9 +58,9 @@ requirements:
     # - nose
 
 about:
-  home: http://astropy.org/montage-wrapper/
-  license: BSD License
-  summary: 'Python wrapper for the Montage mosaicking toolkit'
+  home: http://aplpy.github.io
+  license: MIT License
+  summary: 'The Astronomical Plotting Library in Python'
 
 # See
 # http://docs.continuum.io/conda/build.html for

@@ -1,10 +1,13 @@
+# Recipe is needed because sncosmo does not include astropy_helpers as a submodule,
+# so it needs to be listed as a dependency here.
+
 package:
-  name: iminuit
+  name: sncosmo
   version: "{{version}}"
 
 source:
-  fn: iminuit-{{version}}.tar.gz
-  url: https://pypi.python.org/packages/source/i/iminuit/iminuit-{{version}}.tar.gz
+  fn: sncosmo-{{version}}.tar.gz
+  url: https://pypi.python.org/packages/source/s/sncosmo/sncosmo-{{version}}.tar.gz
   md5: {{md5}}
 #  patches:
    # List any patch files here
@@ -17,9 +20,9 @@ source:
     # Put any entry points (scripts to be generated automatically) here. The
     # syntax is module:function.  For example
     #
-    # - iminuit = iminuit:main
+    # - sncosmo = sncosmo:main
     #
-    # Would create an entry point called iminuit that calls iminuit.main()
+    # Would create an entry point called sncosmo that calls sncosmo.main()
 
 
   # If this is a new build for the same version, increment the build
@@ -29,14 +32,23 @@ source:
 requirements:
   build:
     - python
+    - setuptools
+    - numpy
+    - scipy
+    - astropy
+    - astropy-helpers  # If this ever gets submoduled in here this recipe can go
 
   run:
     - python
+    - numpy
+    - scipy
+    - astropy
 
 test:
   # Python imports
   imports:
-    - iminuit
+    - sncosmo
+    - sncosmo.tests
 
   # commands:
     # You can put test commands to be run here.  Use this to test that the
@@ -51,21 +63,10 @@ test:
     # - nose
 
 about:
-  home: http://iminuit.github.io/iminuit/
-  license: GNU General Public License (GPL) or MIT License
-  summary: 'Interactive Minimization Tools based on MINUIT'
+  home: http://sncosmo.readthedocs.org
+  license: BSD License
+  summary: 'Package for supernova cosmology based on astropy'
 
-extra:
-    # List of platforms on which build of this package is expected to succeed.
-    # Allowed options are those in binstar subdir:
-    #       osx-64, linux-32, linux-64, win-32, win-64
-    # platforms:
-    #     - osx-64
-    #     - linux-64
-    # List of python versions (in CONDA_PY format) for which this package
-    # should be built.
-    pythons:
-        - 27
 # See
 # http://docs.continuum.io/conda/build.html for
 # more information about meta.yaml

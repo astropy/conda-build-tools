@@ -1,0 +1,78 @@
+# Recipe template needed for two reasons:
+#
+# + hgtools is required for build
+# + Do not need the test requirements just for testing imports
+
+package:
+  name: keyring
+  version: "{{version}}"
+
+source:
+  fn: keyring-{{version}}.zip
+  url: https://pypi.python.org/packages/source/k/keyring/keyring-{{version}}.zip
+  md5: {{md5}}
+#  patches:
+   # List any patch files here
+   # - fix.patch
+
+build:
+  # noarch_python: True
+  # preserve_egg_dir: True
+  entry_points:
+    # Put any entry points (scripts to be generated automatically) here. The
+    # syntax is module:function.  For example
+    #
+    # - keyring = keyring:main
+    #
+    # Would create an entry point called keyring that calls keyring.main()
+
+    - keyring=keyring.cli:main
+
+  # If this is a new build for the same version, increment the build
+  # number. If you do not include this key, it defaults to 0.
+  # number: 1
+
+requirements:
+  build:
+    - python
+    - setuptools
+    - hgtools   # skeleton does not catch this
+
+  run:
+    - python
+
+test:
+  # Python imports
+  imports:
+    - keyring
+    - keyring.backends
+    - keyring.tests
+    - keyring.tests.backends
+    - keyring.util
+
+  commands:
+    # You can put test commands to be run here.  Use this to test that the
+    # entry points work.
+
+    - keyring --help
+
+  # You can also put a file called run_test.py in the recipe that will be run
+  # at test time.
+
+  requires:
+    # Do not need the packages below just for testing imports
+    # - fs >=0.5
+    # - gdata
+    # - mock
+    # - pycrypto
+    # - pytest
+    # - python-keyczar
+
+about:
+  home: http://bitbucket.org/kang/python-keyring-lib
+  license: Python Software Foundation License or MIT License
+  summary: 'Store and access your passwords safely.'
+
+# See
+# http://docs.continuum.io/conda/build.html for
+# more information about meta.yaml

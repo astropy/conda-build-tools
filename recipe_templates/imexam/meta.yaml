@@ -1,3 +1,6 @@
+# Need recipe because astropy-helpers is not included as submodule and need
+# to patch setup configuration to avoid trying to update astropy-helpers
+
 package:
   name: imexam
   version: "{{version}}"
@@ -37,6 +40,7 @@ requirements:
     - matplotlib
     - ipython
     - python
+    - python >2.6,<3
     - mock
     - nose
   run:
@@ -48,7 +52,7 @@ requirements:
     - matplotlib
     - ipython
     - python
-
+    - python >2.6,<3
 
 test:
   # Python imports
@@ -81,5 +85,5 @@ extra:
         - linux-64
     # List of python versions (in CONDA_PY format) for which this package
     # should be built.
-    pythons:
-        - 27
+    # pythons:
+    #     - 27
