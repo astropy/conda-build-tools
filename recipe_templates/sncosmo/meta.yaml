@@ -37,6 +37,7 @@ requirements:
     - scipy
     - astropy
     - astropy-helpers  # If this ever gets submoduled in here this recipe can go
+    - cython # There is now one cython file included.
 
   run:
     - python
