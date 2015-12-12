@@ -147,3 +147,7 @@
   version: '0.1'
   astropy_helpers: true
   numpy_compiled_extensions: false
+
+- name: python-cpl
+  version: '0.7'
+  astropy_helpers: false
