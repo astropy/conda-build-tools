@@ -12,9 +12,9 @@ source:
   fn: astroscrappy-{{version}}.tar.gz
   url: https://pypi.python.org/packages/source/a/astroscrappy/astroscrappy-{{version}}.tar.gz
   md5: {{md5}}
-#  patches:
+  patches:
    # List any patch files here
-   # - fix.patch
+    - windows_patch.diff [win]
 
 build:
   # noarch_python: True

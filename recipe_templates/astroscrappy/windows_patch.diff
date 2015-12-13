@@ -1,0 +1,32 @@
+diff --git a/astroscrappy/utils/imutils.h b/astroscrappy/utils/imutils.h
+index b4f9ae2..8acf88a 100644
+--- astroscrappy/utils/imutils.h
++++ astroscrappy/utils/imutils.h
+@@ -10,6 +10,11 @@
+ #ifndef IMUTILS_H_
+ #define IMUTILS_H_
+ 
++/* Including definitions of the standard int types is necesssary for Windows,
++ * and does no harm on other platforms. 
++ */
++#include <stdint.h> 
++
+ /* Define a bool type because there isn't one built in ANSI C */
+ typedef uint8_t bool;
+ #define true 1
+diff --git a/astroscrappy/utils/medutils.h b/astroscrappy/utils/medutils.h
+index 3501636..b7aa72b 100644
+--- astroscrappy/utils/medutils.h
++++ astroscrappy/utils/medutils.h
+@@ -10,6 +10,11 @@
+ #ifndef MEDUTILS_H_
+ #define MEDUTILS_H_
+ 
++/* Including definitions of the standard int types is necesssary for Windows,
++ * and does no harm on other platforms. 
++ */
++#include <stdint.h> 
++
+ /* Define a bool type because there isn't one built in ANSI C */
+ typedef uint8_t bool;
+ #define true 1
