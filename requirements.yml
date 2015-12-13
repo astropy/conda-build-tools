@@ -152,3 +152,9 @@
 - name: python-cpl
   version: '0.7'
   astropy_helpers: false
+
+# astroscrappy has a recipe template
+- name: astroscrappy
+  version: '1.0.3'
+  astropy_helpers: true
+  numpy_compiled_extensions: true
