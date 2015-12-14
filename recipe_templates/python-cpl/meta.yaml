@@ -1,5 +1,6 @@
-# Recipe required because astropy no listed in install_requires in version
+# Recipe required because astropy not listed in install_requires in version
 # 0.7.
+# Also, need to exclude windows as a build platform.
 package:
   name: python-cpl
   version: "{{version}}"
@@ -59,6 +60,13 @@ about:
   license: GNU General Public License v2 or later (GPLv2+)
   summary: 'Python interface for the ESO Common Pipeline Library'
 
+extra:
+    # List of platforms on which build of this package is expected to succeed.
+    # Allowed options are those in binstar subdir:
+    #       osx-64, linux-32, linux-64, win-32, win-64
+    platforms:
+        - osx-64
+        - linux-64
 # See
 # http://docs.continuum.io/conda/build.html for
 # more information about meta.yaml
