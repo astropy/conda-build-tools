@@ -1,0 +1,72 @@
+# Recipe required because astropy not listed in install_requires in version
+# 0.7.
+# Also, need to exclude windows as a build platform.
+package:
+  name: python-cpl
+  version: "{{version}}"
+
+source:
+  fn: python-cpl-{{version}}.tar.gz
+  url: https://pypi.python.org/packages/source/p/python-cpl/python-cpl-{{version}}.tar.gz
+  md5: {{md5}}
+#  patches:
+   # List any patch files here
+   # - fix.patch
+
+# build:
+  # noarch_python: True
+  # preserve_egg_dir: True
+  # entry_points:
+    # Put any entry points (scripts to be generated automatically) here. The
+    # syntax is module:function.  For example
+    #
+    # - python-cpl = python-cpl:main
+    #
+    # Would create an entry point called python-cpl that calls python-cpl.main()
+
+
+  # If this is a new build for the same version, increment the build
+  # number. If you do not include this key, it defaults to 0.
+  # number: 1
+
+requirements:
+  build:
+    - python
+    - astropy
+
+  run:
+    - python
+    - astropy
+
+test:
+  # Python imports
+  imports:
+    - cpl
+
+  # commands:
+    # You can put test commands to be run here.  Use this to test that the
+    # entry points work.
+
+
+  # You can also put a file called run_test.py in the recipe that will be run
+  # at test time.
+
+  # requires:
+    # Put any additional test requirements here.  For example
+    # - nose
+
+about:
+  home: https://pypi.python.org/pypi/python-cpl/0.7
+  license: GNU General Public License v2 or later (GPLv2+)
+  summary: 'Python interface for the ESO Common Pipeline Library'
+
+extra:
+    # List of platforms on which build of this package is expected to succeed.
+    # Allowed options are those in binstar subdir:
+    #       osx-64, linux-32, linux-64, win-32, win-64
+    platforms:
+        - osx-64
+        - linux-64
+# See
+# http://docs.continuum.io/conda/build.html for
+# more information about meta.yaml

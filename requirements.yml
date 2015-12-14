@@ -147,3 +147,8 @@
   version: '0.1'
   astropy_helpers: true
   numpy_compiled_extensions: false
+
+# python-cpl has a recipe template for now
+- name: python-cpl
+  version: '0.7'
+  astropy_helpers: false
