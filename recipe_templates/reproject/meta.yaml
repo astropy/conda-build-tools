@@ -37,7 +37,7 @@ requirements:
 
   run:
     - python
-    - astropy
+    - astropy >=1
     - scipy
     - numpy x.x
     - numpy >1.8
