@@ -33,14 +33,14 @@ requirements:
     - python
     - astropy
     - numpy x.x
-    - numpy >1.7
+    - numpy >1.8
 
   run:
     - python
     - astropy
     - scipy
     - numpy x.x
-    - numpy >1.7
+    - numpy >1.8
 
 test:
   # Python imports
