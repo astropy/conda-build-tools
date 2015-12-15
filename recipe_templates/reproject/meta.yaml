@@ -1,4 +1,5 @@
 # Recipe needed to apply patch on Windows.
+# And to include numpy dependency, including pinning the version.
 
 package:
   name: reproject
@@ -31,11 +32,15 @@ requirements:
   build:
     - python
     - astropy
+    - numpy x.x
+    - numpy >1.7
 
   run:
     - python
     - astropy
     - scipy
+    - numpy x.x
+    - numpy >1.7
 
 test:
   # Python imports
