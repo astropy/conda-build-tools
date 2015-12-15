@@ -139,9 +139,9 @@
 
 # reproject has a recipe template
 - name: reproject
-  version: '0.1'
+  version: '0.2'
   astropy_helpers: true
-  numpy_compiled_extensions: false
+  numpy_compiled_extensions: true
 
 - name: astroplan
   version: '0.1'
