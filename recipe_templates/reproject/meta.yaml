@@ -31,7 +31,7 @@ source:
 requirements:
   build:
     - python
-    - astropy
+    - astropy >=1
     - numpy x.x
     - numpy >1.8
 
