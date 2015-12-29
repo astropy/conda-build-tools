@@ -1,0 +1,47 @@
+diff --git a/astroscrappy/utils/imutils.h b/astroscrappy/utils/imutils.h
+index b4f9ae2..8acf88a 100644
+--- astroscrappy/utils/imutils.h
++++ astroscrappy/utils/imutils.h
+@@ -10,6 +10,11 @@
+ #ifndef IMUTILS_H_
+ #define IMUTILS_H_
+ 
++/* Including definitions of the standard int types is necesssary for Windows,
++ * and does no harm on other platforms. 
++ */
++#include <stdint.h> 
++
+ /* Define a bool type because there isn't one built in ANSI C */
+ typedef uint8_t bool;
+ #define true 1
+diff --git a/astroscrappy/utils/medutils.h b/astroscrappy/utils/medutils.h
+index 3501636..b7aa72b 100644
+--- astroscrappy/utils/medutils.h
++++ astroscrappy/utils/medutils.h
+@@ -10,6 +10,11 @@
+ #ifndef MEDUTILS_H_
+ #define MEDUTILS_H_
+ 
++/* Including definitions of the standard int types is necesssary for Windows,
++ * and does no harm on other platforms. 
++ */
++#include <stdint.h> 
++
+ /* Define a bool type because there isn't one built in ANSI C */
+ typedef uint8_t bool;
+ #define true 1
+diff --git a/astroscrappy/utils/setup_package.py b/astroscrappy/utils/setup_package.py
+index b600a5b..457263a 100644
+--- astroscrappy/utils/setup_package.py
++++ astroscrappy/utils/setup_package.py
+@@ -60,6 +60,10 @@ def get_extensions():
+         ext_im.extra_compile_args.append('-fopenmp')
+         ext_med.extra_link_args = ['-g', '-fopenmp']
+         ext_im.extra_link_args = ['-g', '-fopenmp']
++    elif (sys.platform == 'win32' and 
++          sys.version_info[:2] != (3, 4)):
++      ext_med.extra_compile_args.append('-openmp')
++      ext_im.extra_compile_args.append('-openmp')
+     else:
+         log.warn('OpenMP was not found. '
+                  'astroscrappy will be compiled without OpenMP. '
