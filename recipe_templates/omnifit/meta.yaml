@@ -32,7 +32,9 @@ requirements:
   build:
     - python
     - setuptools
-    - astropy
+    - astropy >=1.0
+    - matplotlib >=1.3.0
+    - lmfit >=0.8.3
 
   run:
     - python
