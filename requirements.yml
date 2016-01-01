@@ -81,7 +81,7 @@
 #   numpy_compiled_extensions: false
 
 - name: photutils
-  version: '0.1'
+  version: '0.2'
   astropy_helpers: true
   numpy_compiled_extensions: false
 
