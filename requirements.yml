@@ -116,7 +116,7 @@
 - name: asdf
   version: 1.0.0
   astropy_helpers: true
-  numpy_compiled_extensions: false
+  numpy_compiled_extensions: yes
 
 # pyregion has a recipe template
 - name: pyregion
