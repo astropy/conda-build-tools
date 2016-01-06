@@ -111,7 +111,12 @@
 - name: gwcs
   version: 0.5
   astropy_helpers: true
-  numpy_compiled_extensions: true
+  numpy_compiled_extensions: false
+
+- name: asdf
+  version: 1.0.0
+  astropy_helpers: true
+  numpy_compiled_extensions: false
 
 # pyregion has a recipe template
 - name: pyregion
