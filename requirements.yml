@@ -108,6 +108,7 @@
   numpy_compiled_extensions: false
   python: '>2.6,<3'
 
+# gwcs has a recipe template
 - name: gwcs
   version: 0.5
   astropy_helpers: true
