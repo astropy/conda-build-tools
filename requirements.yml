@@ -48,6 +48,7 @@
   astropy_helpers: true
   numpy_compiled_extensions: false
 
+# pydl has a recipe template
 - name: pydl
   version: 0.4.1
   astropy_helpers: true
