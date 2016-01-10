@@ -55,7 +55,7 @@ test:
     - pyasdf.commands
     - pyasdf.commands.tests
     - pyasdf.compat
-    - pyasdf.compat._odict_py2
+    # - pyasdf.compat._odict_py2
     - pyasdf.extern
     # - pyasdf.reference_files
     # - pyasdf.schemas
