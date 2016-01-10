@@ -17,12 +17,12 @@
 
 # astropy-helpers has a recipe template
 - name: astropy-helpers
-  version: 1.0.3
+  version: 1.1.1
 
 - name: astroquery
   # Version should match the version on PyPI. Versions that could be
   # interpereted as numbers (e.g. 0.1) should be enclosed in quotes.
-  version: 0.2.6
+  version: 0.3.0
 
   # conda builds disable downloading, but astropy-helpers is typically
   # configured to try to autoupdate during install of affiliated
@@ -48,8 +48,9 @@
   astropy_helpers: true
   numpy_compiled_extensions: false
 
+# pydl has a recipe template
 - name: pydl
-  version: 0.3.0
+  version: 0.4.1
   astropy_helpers: true
   numpy_compiled_extensions: false
 
@@ -108,11 +109,17 @@
   numpy_compiled_extensions: false
   python: '>2.6,<3'
 
-# Chokes on no source
-# - name: gwcs
-#   version: 0.1.dev44
-#   astropy_helpers: true
-#   numpy_compiled_extensions: true
+# gwcs has a recipe template
+- name: gwcs
+  version: 0.5
+  astropy_helpers: true
+  numpy_compiled_extensions: false
+
+# asdf has a recipe template
+- name: asdf
+  version: 1.0.1
+  astropy_helpers: true
+  numpy_compiled_extensions: false
 
 # pyregion has a recipe template
 - name: pyregion
