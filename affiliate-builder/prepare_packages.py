@@ -20,8 +20,6 @@ from astropy.extern.six.moves import xmlrpc_client as xmlrpclib
 from jinja2 import Environment, FileSystemLoader
 from jinja2.exceptions import TemplateNotFound
 
-from generate_initial_versions import get_pypi_info
-
 BINSTAR_CHANNEL = 'astropy'
 PYPI_XMLRPC = 'https://pypi.python.org/pypi'
 BDIST_CONDA_FOLDER = 'bdist_conda'
@@ -42,6 +40,16 @@ def setup_yaml():
     represent_dict_order = lambda self, data:  \
         self.represent_mapping('tag:yaml.org,2002:map', data.items())
     yaml.add_representer(OrderedDict, represent_dict_order)
+
+
+def get_pypi_info(name):
+    client = xmlrpclib.ServerProxy(PYPI_XMLRPC)
+    print(client.system.listMethods())
+    pypi_stable = client.package_releases(name)
+    try:
+        return pypi_stable[0]
+    except IndexError:
+        return None
 
 
 class Package(object):
