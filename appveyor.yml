@@ -55,9 +55,7 @@ install:
     # Instead of building from source -- which does not seem to create
     # the scripts necessary to run conda skeleton -- there is a package
     # on astropy-ci-extras.
-    - cmd: conda install -c astropy-ci-extras conda-build=1.18.1
-    # Install obvious-ci.
-    - cmd: conda install -c astropy-ci-extras obvious-ci
+    - cmd: conda install -c astropy-ci-extras obvious-ci conda-build=1.18.1
 
 # Skip .NET project specific build phase.
 build: off
