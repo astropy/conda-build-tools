@@ -37,7 +37,7 @@ install:
     # options to setup.py)
     - cd conda-build; python setup.py install; cd ..
     # Install obvious-ci.
-    - conda install astropy-ci-extras obvious-ci
+    - conda install -c astropy-ci-extras obvious-ci
 
 script:
     # Get ready to build.
