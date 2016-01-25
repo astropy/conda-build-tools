@@ -45,7 +45,6 @@ test:
   imports:
     - ginga
     - ginga.aggw
-    - ginga.base
     - ginga.cairow
     - ginga.canvas
     - ginga.cvw
