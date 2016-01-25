@@ -1,5 +1,6 @@
 environment:
-  CONDA_INSTALL_LOCN: "C:\\conda"
+  # Appveyor machines come with miniconda already installed.
+  CONDA_INSTALL_LOCN: "C:\\Miniconda-x64"
   CMD_IN_ENV: cmd /E:ON /V:ON /C Obvious-CI\scripts\obvci_appveyor_python_build_env.cmd
   CONDA_BUILD_VERSION: "1.16.0"
   BUILDER_PYTHON_VERSION: "2"
@@ -36,7 +37,11 @@ platform:
 
 install:
     - cmd: git submodule update --init --recursive
-    - cmd: python Obvious-CI\bootstrap-obvious-ci-and-miniconda.py %CONDA_INSTALL_LOCN% %TARGET_ARCH% %BUILDER_PYTHON_VERSION% --without-obvci --miniconda-version latest
+    # Clone simply to get the script for setting up Windows build environment.
+    - cmd: git clone https://github.com/pelson/Obvious-CI.git
+    # Debugging...
+    - cmd: dir
+    # No need to install miniconda because appveyor comes with it.
     - cmd: SET PATH=%CONDA_INSTALL_LOCN%;%CONDA_INSTALL_LOCN%\Scripts;%PATH%
 
     - cmd: conda config --set always_yes true
@@ -50,9 +55,7 @@ install:
     # Instead of building from source -- which does not seem to create
     # the scripts necessary to run conda skeleton -- there is a package
     # on astropy-ci-extras.
-    - cmd: conda install -c astropy-ci-extras conda-build=1.18.1
-    # Install obvious-ci; run 2to3 first if the build is done on python 3.
-    - cmd: cd Obvious-CI & (if %BUILDER_PYTHON_VERSION%==3 2to3 -w .) & python setup.py install & cd ..
+    - cmd: conda install -c astropy-ci-extras obvious-ci conda-build=1.18.1
 
 # Skip .NET project specific build phase.
 build: off
