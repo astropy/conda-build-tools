@@ -67,7 +67,7 @@ class Package(object):
 
     def __init__(self, pypi_name, version=None,
                  numpy_compiled_extensions=False,
-                 astropy_helpers=False,
+                 setup_options=None,
                  python_requirements=None):
         self._pypi_name = pypi_name
         self.required_version = version
@@ -78,7 +78,7 @@ class Package(object):
         self._extra_meta = None
         self._build_pythons = None
         self._numpy_compiled_extensions = numpy_compiled_extensions
-        self._astropy_helpers = astropy_helpers
+        self._setup_options = setup_options
         self._python_requirements = python_requirements
 
     @property
@@ -125,8 +125,8 @@ class Package(object):
         return self._numpy_compiled_extensions
 
     @property
-    def astropy_helpers(self):
-        return self._astropy_helpers
+    def setup_options(self):
+        return self._setup_options
 
     @property
     def python_requirements(self):
@@ -299,12 +299,12 @@ def get_package_versions(requirements_path):
 
     packages = []
     for p in package_list:
-        helpers = p.get('astropy_helpers', False)
+        helpers = p.get('setup_options', None)
         numpy_extensions = p.get('numpy_compiled_extensions', False)
         python_requirements = p.get('python', [])
         packages.append(Package(p['name'],
                                 version=p['version'],
-                                astropy_helpers=helpers,
+                                setup_options=helpers,
                                 numpy_compiled_extensions=numpy_extensions,
                                 python_requirements=python_requirements))
 
@@ -363,8 +363,8 @@ def generate_skeleton(package, path):
     additional_arguments = ['--version', str(package.required_version),
                             '--output-dir', path]
 
-    if package.astropy_helpers:
-        additional_arguments.extend(['--setup-options=--offline'])
+    if package.setup_options:
+        additional_arguments.extend(['--setup-options={}'.format(package.setup_options)])
 
     if package.numpy_compiled_extensions:
         additional_arguments.append('--pin-numpy')
