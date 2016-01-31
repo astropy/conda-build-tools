@@ -390,7 +390,10 @@ def main(args):
 
     packages = [p for p in packages if p.supported_platform]
 
-    needs_recipe = os.listdir(TEMPLATE_FOLDER)
+    try:
+        needs_recipe = os.listdir(TEMPLATE_FOLDER)
+    except OSError:
+        needs_recipe = []
 
     build_recipe = [p for p in packages if p.conda_name in needs_recipe]
     build_skeleton = [p for p in packages if p.conda_name not in needs_recipe]
