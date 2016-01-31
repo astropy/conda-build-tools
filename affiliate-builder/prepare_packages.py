@@ -244,31 +244,6 @@ class Package(object):
         self._url = url
         self._md5 = md5sum
 
-    def download(self, directory, checksum=True):
-        """
-        Download package and store in directory.
-
-        Parameters
-        ----------
-        directory : str
-            Directory in which to store the downloaded package.
-
-        checksum: bool, optional
-            If ``True``, check the MD5 checksum of the download.
-        """
-        loader = six.moves.urllib.request.URLopener()
-        destination = os.path.join(directory, self.filename)
-        print(destination)
-        loader.retrieve(self.url, destination)
-        if checksum:
-            with open(destination, 'rb') as f:
-                # Not worried about the packages being too big for memory.
-                contents = f.read()
-            md5_downloaded = hashlib.md5(contents).hexdigest()
-            if md5_downloaded != self.md5:
-                raise ValueError('checksum mismatch '
-                                 'in {}'.format(self.filename))
-
     @property
     def supported_platform(self):
         """
@@ -309,21 +284,6 @@ def get_package_versions(requirements_path):
                                 python_requirements=python_requirements))
 
     return packages
-
-
-def _conda_python_build_string():
-    """
-    Construct the part of the conda build string that contains the python
-    version.
-    """
-    try:
-        conda_python_version = os.environ['CONDA_PY']
-    except KeyError:
-        raise RuntimeError('The environment variable CONDA_PY needs to be '
-                           'set before running this script.')
-    # Remove the period if it is in the python version.
-    conda_python_version = ''.join(conda_python_version.split('.'))
-    return 'py' + conda_python_version
 
 
 def render_template(package, template):
