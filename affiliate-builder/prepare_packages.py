@@ -404,7 +404,8 @@ def main(args):
         recipe_path = os.path.join(RECIPE_FOLDER, p.conda_name)
         template_path = os.path.join(TEMPLATE_FOLDER, p.conda_name)
         os.mkdir(recipe_path)
-        templates = [d for d in os.listdir(template_path) if not d.startswith('.')]
+        templates = [d for d in os.listdir(template_path) if
+                     not d.startswith('.')]
         for template in templates:
             rendered = render_template(p, template)
             with open(os.path.join(recipe_path, template), 'wt') as f:
