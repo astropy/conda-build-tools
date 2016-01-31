@@ -1,175 +1,44 @@
-- name: hgtools
-  version: '6.3'
+# Sample requirements file.
 
-# keyring has a recipe template
-- name: keyring
-  version: '5.3'
+# Each package gets its own section. Hopefully the package you are building
+# only needs name and version, but there are several other options.
 
-# lmfit is required for omnifit
-- name: lmfit
-  version: '0.9.2'
+- name: ccdproc
 
-- name: iminuit
-  version: 1.2
-
-- name: emcee
-  version: 2.1.0
-
-# astropy-helpers has a recipe template
-- name: astropy-helpers
-  version: 1.1.1
-
-- name: astroquery
   # Version should match the version on PyPI. Versions that could be
-  # interpereted as numbers (e.g. 0.1) should be enclosed in quotes.
-  version: 0.3.1
+  # interpreted as numbers (e.g. 0.1) must be enclosed in quotes.
 
-  # conda builds disable downloading, but astropy-helpers is typically
-  # configured to try to autoupdate during install of affiliated
-  # packages. Set to true if the package uses astropy-helpers and
-  # auto-update and the --offline flag will be passed to setup.py.
-  astropy_helpers: true   # Defaults to false if omitted.
+  version: '0.3.3' # Required for all packages.
+
+  # Some packages need extra options passed to setup.py install. This
+  # is the place to provide those options.
+
+  setup_options: '--offline'   # Defaults to empty if omitted.
 
   # If the package contains compiled extensions that link to numpy this
   # must be set to true to ensure the package is built properly.
-  # If in doubt, set it to true...though it should *always* be false
+  # If in doubt, set it to true...though it should *always be false*
   # for a pure python package.
+
   numpy_compiled_extensions: false   # Defaults to false if omitted.
 
   # Some packages can only be built for specific versions of python but
   # setup.py often does not contain those restrictions (and conda skeleton
   # ignores it if present), so list restrictions on python version here.
 
-  # python: '>2.6|>=3.4'  # if omitted, no restriction on python builds.
+  python: '>=2.7|>=3.4'  # if omitted, no restriction on python builds.
 
-# sncosmo has a recipe template
-- name: sncosmo
-  version: 1.2.0
-  astropy_helpers: true
-  numpy_compiled_extensions: false
+  # Some packages can only be built for certain platforms. List the EXCLUDED
+  # platforms here. Platform names are shown below...note that listing all
+  # platforms would result in no builds!
 
-# pydl has a recipe template
-- name: pydl
-  version: 0.4.1
-  astropy_helpers: true
-  numpy_compiled_extensions: false
+  # Default, if omitted, is to build on all platforms listed below.
+  excluded_platforms:
+    - 'win-64'
+    - 'linux-64'
+    - 'osx-64'
 
-# montage-wrapper has a recipe template
-- name: montage-wrapper
-  version: 0.9.8
-  astropy_helpers: true
-  numpy_compiled_extensions: false
+# An example of a simple requirement.
 
-- name: ccdproc
-  version: 0.3.3
-  astropy_helpers: true
-  numpy_compiled_extensions: false
-
-- name: wcsaxes
-  version: '0.6'
-  astropy_helpers: true
-  numpy_compiled_extensions: false
-
-- name: gammapy
-  version: '0.3'
-  astropy_helpers: true
-  numpy_compiled_extensions: false
-
-# Fails because its astropy helpers is ancient/tries to import astropy???
-# - name: pyvo
-#   version: 0.0beta2
-#   astropy_helpers: true
-#   numpy_compiled_extensions: false
-
-- name: photutils
-  version: '0.2.1'
-  astropy_helpers: true
-  numpy_compiled_extensions: false
-
-# Still has no source on pypi....
-# - name: spherical-geometry
-#   version: 1.0.4
-#   astropy_helpers: true
-#   numpy_compiled_extensions: false
-
-# APLpy currently has a recipe template
-- name: APLpy
-  version: '1.0'
-  astropy_helpers: true
-
-- name: specutils
-  version: '0.1'
-  astropy_helpers: true
-  numpy_compiled_extensions: false
-
-# imexam has a recipe template
-- name: imexam
-  version: 0.5.2
-  astropy_helpers: true
-  numpy_compiled_extensions: false
-  python: '>2.6,<3'
-
-# gwcs has a recipe template
-- name: gwcs
-  version: 0.5
-  astropy_helpers: true
-  numpy_compiled_extensions: false
-
-# asdf has a recipe template
-- name: asdf
-  version: 1.0.1
-  astropy_helpers: true
-  numpy_compiled_extensions: false
-
-# pyregion has a recipe template
-- name: pyregion
-  version: 1.1.4
-  astropy_helpers: true
-  numpy_compiled_extensions: true
-
-# astroML has a recipe template
-- name: astroML
-  version: '0.3'
-  python: '>=2.6|>=3.3'
-
-# ginga has a recipe template
-- name: ginga
-  version: 2.5.20151230025145
-  astropy_helpers: true
-  numpy_compiled_extensions: false
-  python: '>2.6'
-
-# naima has a recipe template
-- name: naima
-  version: '0.6.1'
-  astropy_helpers: true
-  numpy_compiled_extensions: false
-
-- name: pyephem
-  version: 3.7.6.0
-
-# reproject has a recipe template
-- name: reproject
-  version: '0.2'
-  astropy_helpers: true
-  numpy_compiled_extensions: true
-
-- name: astroplan
-  version: '0.1'
-  astropy_helpers: true
-  numpy_compiled_extensions: false
-
-# python-cpl has a recipe template for now
-- name: python-cpl
-  version: '0.7'
-  astropy_helpers: false
-
-# astroscrappy has a recipe template
-- name: astroscrappy
-  version: '1.0.3'
-  astropy_helpers: true
-  numpy_compiled_extensions: true
-
-- name: omnifit
-  version: '0.2.1'
-  astropy_helpers: true
+- name: hgtools
+  version: '6.3'

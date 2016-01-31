@@ -10,8 +10,6 @@ from collections import OrderedDict
 
 import yaml
 
-from binstar_client.utils import get_binstar
-from binstar_client.errors import NotFound
 from conda import config
 
 from astropy.extern import six
@@ -20,12 +18,9 @@ from astropy.extern.six.moves import xmlrpc_client as xmlrpclib
 from jinja2 import Environment, FileSystemLoader
 from jinja2.exceptions import TemplateNotFound
 
-BINSTAR_CHANNEL = 'astropy'
 PYPI_XMLRPC = 'https://pypi.python.org/pypi'
-BDIST_CONDA_FOLDER = 'bdist_conda'
 TEMPLATE_FOLDER = 'recipe_templates'
 RECIPE_FOLDER = 'recipes'
-BUILD_ORDER = 'build_order.txt'
 ALL_PLATFORMS = ['osx-64', 'linux-64', 'linux-32', 'win-32', 'win-64']
 
 
@@ -206,11 +201,9 @@ class Package(object):
         if self._extra_meta is not None:
             return self._extra_meta
 
-        template_dir = os.path.join(TEMPLATE_FOLDER, self.conda_name)
-
         try:
             meta = render_template(self, 'meta.yaml')
-        except TemplateNotFound as e:
+        except TemplateNotFound:
             # No recipe, make an empty meta for now.
             meta = ''
 
@@ -333,70 +326,6 @@ def _conda_python_build_string():
     return 'py' + conda_python_version
 
 
-def construct_build_list(packages, conda_channel=None):
-    channel = conda_channel or BINSTAR_CHANNEL
-    conda_py = _conda_python_build_string()
-
-    for package in packages:
-        print('Checking status of {}...'.format(package.conda_name), end="")
-        binstar = get_binstar()
-
-        # Decide whether the package needs to be built by checking to see if
-        # it exists on binstar.
-        try:
-            binstar_info = binstar.release(channel,
-                                           package.conda_name,
-                                           package.required_version)
-        except NotFound:
-            # No builds for this version on any platform, so need to build.
-            package.build = True
-
-        if not package.build:
-            # We have binstar_info, need to check whether we have this
-            # platform and python version.
-            for d in binstar_info['distributions']:
-                if (d['attrs']['subdir'] == config.subdir
-                    and conda_py in d['attrs']['build']):
-
-                    break
-            else:
-                package.build = True
-
-        unsupported_platform = config.subdir not in package.build_platforms
-        unsupported_python = conda_py[2:] not in package.build_pythons
-
-        if not package.build:
-            build_message = "do not build"
-        elif package.is_dev:
-            build_message = 'skip because package version is dev'
-        elif unsupported_platform:
-            build_message = 'build not supported on this platform'
-        elif unsupported_python:
-            build_message = 'build not supported on this python version'
-        elif not package.url:
-            build_message = 'no source found on PyPI'
-        else:
-            build_message = 'BUILD'
-
-        package.build = (package.build and not package.is_dev
-                         and package.url and not unsupported_platform
-                         and not unsupported_python)
-
-        print(build_message)
-
-    return [p for p in packages if p.build]
-
-
-def write_build_order(build_bdist):
-    """
-    Write list of directories to be built in the order they appear in
-    requirements file.
-    """
-    names = [p.conda_name for p in build_bdist]
-    with open(BUILD_ORDER, 'wt') as f:
-        f.writelines('\n'.join(names))
-
-
 def render_template(package, template):
     """
     Render recipe components from jinja2 templates.
@@ -475,7 +404,8 @@ def main(args):
         recipe_path = os.path.join(RECIPE_FOLDER, p.conda_name)
         template_path = os.path.join(TEMPLATE_FOLDER, p.conda_name)
         os.mkdir(recipe_path)
-        templates = [d for d in os.listdir(template_path) if not d.startswith('.')]
+        templates = [d for d in os.listdir(template_path) if
+                     not d.startswith('.')]
         for template in templates:
             rendered = render_template(p, template)
             with open(os.path.join(recipe_path, template), 'wt') as f:
