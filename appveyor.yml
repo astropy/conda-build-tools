@@ -1,9 +1,11 @@
+# Configure appveyor for builds.
+
 environment:
   # Appveyor machines come with miniconda already installed.
   CONDA_INSTALL_LOCN: "C:\\Miniconda-x64"
+
+  # Need this to set up compilation on Windows.
   CMD_IN_ENV: cmd /E:ON /V:ON /C Obvious-CI\scripts\obvci_appveyor_python_build_env.cmd
-  CONDA_BUILD_VERSION: "1.16.0"
-  BUILDER_PYTHON_VERSION: "2"
   # Python version restrictions that should apply to all builds regardless
   # of any package-specific version restrictions
   PYTHON_BUILD_RESTRICTIONS: "2.7*|>=3.4"
@@ -26,7 +28,7 @@ environment:
       PYTHON_BUILD_RESTRICTIONS: "3.5*"
       CONDA_PY: "35"
     # For 32 bit builds there are no compiler issues, let Obvious-CI
-    # handle the matrix
+    # handle the matrix.
     # - TARGET_ARCH: "x86"
     #   PYTHON_BUILD_RESTRICTIONS: "2.7*|>=3.4"
 
@@ -37,10 +39,10 @@ platform:
 
 install:
     - cmd: git submodule update --init --recursive
+
     # Clone simply to get the script for setting up Windows build environment.
     - cmd: git clone https://github.com/pelson/Obvious-CI.git
-    # Debugging...
-    - cmd: dir
+
     # No need to install miniconda because appveyor comes with it.
     - cmd: SET PATH=%CONDA_INSTALL_LOCN%;%CONDA_INSTALL_LOCN%\Scripts;%PATH%
 
@@ -61,10 +63,7 @@ install:
 build: off
 
 test_script:
+    # Get ready to build.
     - "%CMD_IN_ENV% python affiliate-builder\\prepare_packages.py requirements.yml"
+    # Packages are uploaded as they are built.
     - if exist recipes %CMD_IN_ENV% obvci_conda_build_dir --build-condition="python %PYTHON_BUILD_RESTRICTIONS%" recipes astropy
-    # Right now fails happen immediately on trying to build.
-    # - python affiliate-builder\\check_build_results.py
-
-# Upload now occurs immediately after recipe is built.
-# on_success:
