@@ -23,6 +23,7 @@ requirements:
         - conda-build
         - anaconda-client
         - obvious-ci
+        - six
 
 test:
   imports:

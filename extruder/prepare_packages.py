@@ -11,7 +11,7 @@ import yaml
 
 from conda import config
 
-from astropy.extern.six.moves import xmlrpc_client as xmlrpclib
+from six.moves import xmlrpc_client as xmlrpclib
 
 from jinja2 import Environment, FileSystemLoader
 from jinja2.exceptions import TemplateNotFound
