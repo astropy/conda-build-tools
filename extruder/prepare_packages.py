@@ -286,7 +286,7 @@ def get_package_versions(requirements_path):
     return packages
 
 
-def render_template(package, template):
+def render_template(package, template, folder=TEMPLATE_FOLDER):
     """
     Render recipe components from jinja2 templates.
 
@@ -296,9 +296,11 @@ def render_template(package, template):
     package : Package
         :class:`Package` object for which template will be rendered.
     template : str
-        Name of template file, path relative to ``TEMPLATE_FOLDER``.
+        Name of template file, path relative to ``folder``.
+    folder : str
+        Path to folder containing template.
     """
-    full_template_path = os.path.abspath(TEMPLATE_FOLDER)
+    full_template_path = os.path.abspath(folder)
     jinja_env = Environment(loader=FileSystemLoader(full_template_path))
     tpl = jinja_env.get_template('/'.join([package.conda_name, template]))
     rendered = tpl.render(version=package.required_version, md5=package.md5)
@@ -349,14 +351,19 @@ def main(args=None):
     if args is None:
         parser = ArgumentParser('command line tool for building packages.')
         parser.add_argument('requirements',
-                            help='Full path to requirements.yml')
+                            help='Path to requirements.yml')
+        parser.add_argument('--template-dir', default=TEMPLATE_FOLDER,
+                            help="Path the folder of recipe templates, if "
+                                 "any. Default: '{}'".format(TEMPLATE_FOLDER))
         args = parser.parse_args()
+        template_dir = args.template_dir
+
     packages = get_package_versions(args.requirements)
 
     packages = [p for p in packages if p.supported_platform]
 
     try:
-        needs_recipe = os.listdir(TEMPLATE_FOLDER)
+        needs_recipe = os.listdir(template_dir)
     except OSError:
         needs_recipe = []
 
@@ -370,12 +377,13 @@ def main(args=None):
     for p in build_recipe:
         print('Writing recipe for {}.'.format(p.conda_name))
         recipe_path = os.path.join(RECIPE_FOLDER, p.conda_name)
-        template_path = os.path.join(TEMPLATE_FOLDER, p.conda_name)
+        template_path = os.path.join(template_dir, p.conda_name)
         os.mkdir(recipe_path)
         templates = [d for d in os.listdir(template_path) if
                      not d.startswith('.')]
         for template in templates:
-            rendered = render_template(p, template)
+            print(template, template_dir)
+            rendered = render_template(p, template, folder=template_dir)
             with open(os.path.join(recipe_path, template), 'wt') as f:
                 f.write(rendered)
 
