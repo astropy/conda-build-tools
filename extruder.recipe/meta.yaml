@@ -29,8 +29,8 @@ test:
   imports:
     - extruder
   commands:
-    - conda buildall --help
-    - conda-buildall --version
+    - extrude_template --help
+    - extrude_packages --help
 
 about:
   license: BSD-3
