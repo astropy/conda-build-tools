@@ -42,8 +42,6 @@ platform:
     - x64
 
 install:
-    - cmd: git submodule update --init --recursive
-
     # Clone simply to get the script for setting up Windows build environment.
     - cmd: git clone https://github.com/pelson/Obvious-CI.git
 
