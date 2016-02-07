@@ -52,12 +52,13 @@ install:
     - cmd: conda install --quiet astropy anaconda-client jinja2 cython
     # These installs are needed on windows but not other platforms.
     - cmd: conda install patch psutil
+    - cmd: conda install -c conda-forge obvious-ci
     # Install custom version of conda-build for now (need to be able to pass
     # options to setup.py)
     # Instead of building from source -- which does not seem to create
     # the scripts necessary to run conda skeleton -- there is a package
     # on astropy-ci-extras.
-    - cmd: conda install -c astropy-ci-extras obvious-ci conda-build=1.18.1
+    - cmd: conda install -c astropy-ci-extras conda-build=1.18.1
 
 # Skip .NET project specific build phase.
 build: off

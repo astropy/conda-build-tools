@@ -36,7 +36,7 @@ install:
     - conda config --add channels astropy
 
     # Install obvious-ci.
-    - conda install -c astropy-ci-extras obvious-ci
+    - conda install -c conda-forge obvious-ci
 
     # Install custom version of conda-build for now (need to be able to pass
     # options to setup.py)
