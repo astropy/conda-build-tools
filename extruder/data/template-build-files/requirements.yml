@@ -38,7 +38,13 @@
     - 'linux-64'
     - 'osx-64'
 
+
 # An example of a simple requirement.
 
 - name: hgtools
   version: '6.3'
+
+# The package below has a recipe template.
+
+- name: APLpy
+  version: '1.0'
