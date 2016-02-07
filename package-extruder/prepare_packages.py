@@ -261,7 +261,7 @@ def get_package_versions(requirements_path):
     ----------
 
     requirements_path : str
-        Path to ``requirements.txt``
+        Path to ``requirements.yml``
 
     Returns
     -------
@@ -277,6 +277,8 @@ def get_package_versions(requirements_path):
         helpers = p.get('setup_options', None)
         numpy_extensions = p.get('numpy_compiled_extensions', False)
         python_requirements = p.get('python', [])
+        # TODO: Get supported platforms from requirements,
+        #       not from recipe template.
         packages.append(Package(p['name'],
                                 version=p['version'],
                                 setup_options=helpers,
