@@ -56,10 +56,6 @@ if not RELEASE:
 # modify distutils' behavior.
 cmdclassd = register_commands(PACKAGENAME, VERSION, RELEASE)
 
-# Adjust the compiler in case the default on this platform is to use a
-# broken one.
-adjust_compiler(PACKAGENAME)
-
 # Freeze build information in version.py
 generate_version_py(PACKAGENAME, VERSION, RELEASE,
                     get_debug_option(PACKAGENAME))
@@ -76,7 +72,7 @@ package_info = get_package_info()
 
 # Add the project-global data
 package_info['package_data'].setdefault(PACKAGENAME, [])
-package_info['package_data'][PACKAGENAME].append('data/*')
+# Package now included as part of MANIFEST.in
 
 # Define entry points for command-line scripts
 entry_points = {'console_scripts': []}
