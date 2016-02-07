@@ -1,6 +1,9 @@
 # Configure appveyor for builds.
 
 environment:
+  # Anaconda.org channel to which packages should be uploaded.
+  DESTINATION_CONDA_CHANNEL: "astropy"
+
   # Appveyor machines come with miniconda already installed.
   CONDA_INSTALL_LOCN: "C:\\Miniconda-x64"
 
@@ -11,7 +14,8 @@ environment:
   PYTHON_BUILD_RESTRICTIONS: "2.7*|>=3.4"
 
   BINSTAR_TOKEN:
-    secure: eNFZ6uLsFUgtwjXf6n/vayT97T4sSX1nG3iv8Hfp2vWKIZJIQ6jmCeL/agYmnbiX
+    # Paste the security token for your destination conda channel here.
+    secure:
 
   matrix:
     # Unfortunately, compiler/SDK configuration for 64 bit builds depends on
@@ -67,4 +71,4 @@ test_script:
     # Get ready to build.
     - "%CMD_IN_ENV% python affiliate-builder\\prepare_packages.py requirements.yml"
     # Packages are uploaded as they are built.
-    - if exist recipes %CMD_IN_ENV% obvci_conda_build_dir --build-condition="python %PYTHON_BUILD_RESTRICTIONS%" recipes astropy
+    - if exist recipes %CMD_IN_ENV% obvci_conda_build_dir --build-condition="python %PYTHON_BUILD_RESTRICTIONS%" recipes DESTINATION_CONDA_CHANNEL
