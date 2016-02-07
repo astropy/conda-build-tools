@@ -4,7 +4,6 @@ from __future__ import (division, print_function, absolute_import)
 from argparse import ArgumentParser
 import os
 import re
-import hashlib
 import subprocess
 from collections import OrderedDict
 
@@ -12,7 +11,6 @@ import yaml
 
 from conda import config
 
-from astropy.extern import six
 from astropy.extern.six.moves import xmlrpc_client as xmlrpclib
 
 from jinja2 import Environment, FileSystemLoader
