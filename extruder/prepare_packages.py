@@ -37,7 +37,6 @@ def setup_yaml():
 
 def get_pypi_info(name):
     client = xmlrpclib.ServerProxy(PYPI_XMLRPC)
-    print(client.system.listMethods())
     pypi_stable = client.package_releases(name)
     try:
         return pypi_stable[0]
@@ -382,7 +381,6 @@ def main(args=None):
         templates = [d for d in os.listdir(template_path) if
                      not d.startswith('.')]
         for template in templates:
-            print(template, template_dir)
             rendered = render_template(p, template, folder=template_dir)
             with open(os.path.join(recipe_path, template), 'wt') as f:
                 f.write(rendered)
