@@ -345,7 +345,12 @@ def inject_python_requirements(package, recipe_path):
         yaml.dump(recipe, f, default_flow_style=False)
 
 
-def main(args):
+def main(args=None):
+    if args is None:
+        parser = ArgumentParser('command line tool for building packages.')
+        parser.add_argument('requirements',
+                            help='Full path to requirements.yml')
+        args = parser.parse_args()
     packages = get_package_versions(args.requirements)
 
     packages = [p for p in packages if p.supported_platform]
@@ -383,8 +388,4 @@ def main(args):
 
 
 if __name__ == '__main__':
-    parser = ArgumentParser('command line tool for building packages.')
-    parser.add_argument('requirements',
-                        help='Full path to requirements.txt')
-    args = parser.parse_args()
-    main(args)
+    main()
