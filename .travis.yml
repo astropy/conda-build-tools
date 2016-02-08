@@ -17,6 +17,9 @@ install:
     - export PATH=${CONDA_INSTALL_LOCN}/bin:$PATH
     - conda config --set always_yes true
 
+    # Need this for astropy-helpers
+    - conda config --add channels astropy
+
     - conda update --quiet conda
 
     # Install a couple of dependencies we need for sure.

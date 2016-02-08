@@ -40,6 +40,10 @@ install:
 
     - cmd: conda config --set always_yes true
     - cmd: conda update --quiet conda
+
+    # Need this for astropy-helpers
+    - cmd: conda config --add channels astropy
+
     - cmd: conda install --quiet jinja2 conda-build
     # These installs are needed on windows but not other platforms.
     - cmd: conda install patch psutil
