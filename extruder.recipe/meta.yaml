@@ -1,0 +1,34 @@
+{% set data = load_setuptools() %}
+
+package:
+    name: extruder
+    version: {{data.get('version')}}
+
+source:
+    path: ../
+
+requirements:
+    build:
+        - python
+        - setuptools
+        - astropy-helpers
+
+    run:
+        - python
+        - setuptools
+        - conda
+        - conda-build
+        - anaconda-client
+        - obvious-ci
+        - six
+
+test:
+  imports:
+    - extruder
+  commands:
+    - extrude_template --help
+    - extrude_packages --help
+
+about:
+  license: BSD-3
+  home: https://github.com/astropy/conda-build-tools

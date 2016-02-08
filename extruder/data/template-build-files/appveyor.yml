@@ -1,11 +1,21 @@
 # Configure appveyor for builds.
 
 environment:
+  # Anaconda.org channel to which packages should be uploaded.
+  DESTINATION_CONDA_CHANNEL: "astropy"
+
   # Appveyor machines come with miniconda already installed.
   CONDA_INSTALL_LOCN: "C:\\Miniconda-x64"
 
   # Need this to set up compilation on Windows.
   CMD_IN_ENV: cmd /E:ON /V:ON /C Obvious-CI\scripts\obvci_appveyor_python_build_env.cmd
+  # Python version restrictions that should apply to all builds regardless
+  # of any package-specific version restrictions
+  PYTHON_BUILD_RESTRICTIONS: "2.7*|>=3.4"
+
+  BINSTAR_TOKEN:
+    # Paste the security token for your destination conda channel here.
+    secure: "{{ appveyor_binstar_token }}"
 
   matrix:
     # Unfortunately, compiler/SDK configuration for 64 bit builds depends on
@@ -40,21 +50,23 @@ install:
 
     - cmd: conda config --set always_yes true
     - cmd: conda update --quiet conda
-
-    # Gets us Obvious-ci
-    - cmd: conda config --add channels conda-forge
-
-    # Need this for astropy-helpers
     - cmd: conda config --add channels astropy
-    - cmd: conda install astropy-helpers
-
-    - cmd: conda install --quiet jinja2 conda-build
+    - cmd: conda install --quiet astropy anaconda-client jinja2 cython
     # These installs are needed on windows but not other platforms.
     - cmd: conda install patch psutil
+    - cmd: conda install -c conda-forge obvious-ci
+    # Install custom version of conda-build for now (need to be able to pass
+    # options to setup.py)
+    # Instead of building from source -- which does not seem to create
+    # the scripts necessary to run conda skeleton -- there is a package
+    # on astropy-ci-extras.
+    - cmd: conda install -c astropy-ci-extras conda-build=1.18.1
 
 # Skip .NET project specific build phase.
 build: off
 
 test_script:
-    # Not much of a real test yet, just try to build myself...
-    - "%CMD_IN_ENV% conda build extruder.recipe"
+    # Get ready to build.
+    - "%CMD_IN_ENV% python affiliate-builder\\prepare_packages.py requirements.yml"
+    # Packages are uploaded as they are built.
+    - if exist recipes %CMD_IN_ENV% obvci_conda_build_dir --build-condition="python %PYTHON_BUILD_RESTRICTIONS%" recipes DESTINATION_CONDA_CHANNEL

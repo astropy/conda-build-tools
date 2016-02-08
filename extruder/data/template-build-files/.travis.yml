@@ -1,0 +1,50 @@
+# The language in this case has no bearing - we are going to be making use of "conda" for a
+# python distribution for the scientific python stack.
+os:
+  - linux
+  - osx
+
+env:
+    global:
+        - DESTINATION_CONDA_CHANNEL = "astropy"
+        - TARGET_ARCH="x64"
+        - CONDA_INSTALL_LOCN="${HOME}/miniconda"
+
+        # Defines BINSTAR_TOKEN for your binstar channel
+        - secure: "{{ travis_binstar_token }}"
+
+        # The python build restriction MUST be set at the moment, though it
+        # can have any value. The setting below avoids known-bad builds on
+        # python 2.6 and 3.3 for some packages.
+        - PYTHON_BUILD_RESTRICTIONS="2.7*|>=3.4"
+
+# Matrix is fully specified (for now) by os versions
+
+install:
+    # Install and set up miniconda.
+    - if [ $TRAVIS_OS_NAME == "linux" ]; then wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh; fi
+    - if [ $TRAVIS_OS_NAME == "osx" ]; then wget http://repo.continuum.io/miniconda/Miniconda-latest-MacOSX-x86_64.sh -O miniconda.sh; fi
+    - bash miniconda.sh -b -p $CONDA_INSTALL_LOCN
+    - export PATH=${CONDA_INSTALL_LOCN}/bin:$PATH
+    - conda config --set always_yes true
+
+    - conda update --quiet conda
+
+    # Install a couple of dependencies we need for sure.
+    - conda install --quiet --yes astropy anaconda-client jinja2 cython pycrypto
+
+    - conda config --add channels astropy
+
+    # Install obvious-ci.
+    - conda install -c conda-forge obvious-ci
+
+    # Install custom version of conda-build for now (need to be able to pass
+    # options to setup.py)
+    - conda remove conda-build
+    - conda install astropy-ci-extras conda-build
+
+script:
+    # Get ready to build.
+    - python affiliate-builder/prepare_packages.py requirements.yml
+    # Packages are uploaded as they are built.
+    - if [[ -d recipes ]]; then obvci_conda_build_dir --build-condition="python $PYTHON_BUILD_RESTRICTIONS" recipes DESTINATION_CONDA_CHANNEL; fi

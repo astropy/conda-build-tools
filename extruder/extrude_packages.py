@@ -4,7 +4,6 @@ from __future__ import (division, print_function, absolute_import)
 from argparse import ArgumentParser
 import os
 import re
-import hashlib
 import subprocess
 from collections import OrderedDict
 
@@ -12,8 +11,7 @@ import yaml
 
 from conda import config
 
-from astropy.extern import six
-from astropy.extern.six.moves import xmlrpc_client as xmlrpclib
+from six.moves import xmlrpc_client as xmlrpclib
 
 from jinja2 import Environment, FileSystemLoader
 from jinja2.exceptions import TemplateNotFound
@@ -39,7 +37,6 @@ def setup_yaml():
 
 def get_pypi_info(name):
     client = xmlrpclib.ServerProxy(PYPI_XMLRPC)
-    print(client.system.listMethods())
     pypi_stable = client.package_releases(name)
     try:
         return pypi_stable[0]
@@ -244,31 +241,6 @@ class Package(object):
         self._url = url
         self._md5 = md5sum
 
-    def download(self, directory, checksum=True):
-        """
-        Download package and store in directory.
-
-        Parameters
-        ----------
-        directory : str
-            Directory in which to store the downloaded package.
-
-        checksum: bool, optional
-            If ``True``, check the MD5 checksum of the download.
-        """
-        loader = six.moves.urllib.request.URLopener()
-        destination = os.path.join(directory, self.filename)
-        print(destination)
-        loader.retrieve(self.url, destination)
-        if checksum:
-            with open(destination, 'rb') as f:
-                # Not worried about the packages being too big for memory.
-                contents = f.read()
-            md5_downloaded = hashlib.md5(contents).hexdigest()
-            if md5_downloaded != self.md5:
-                raise ValueError('checksum mismatch '
-                                 'in {}'.format(self.filename))
-
     @property
     def supported_platform(self):
         """
@@ -286,7 +258,7 @@ def get_package_versions(requirements_path):
     ----------
 
     requirements_path : str
-        Path to ``requirements.txt``
+        Path to ``requirements.yml``
 
     Returns
     -------
@@ -302,6 +274,8 @@ def get_package_versions(requirements_path):
         helpers = p.get('setup_options', None)
         numpy_extensions = p.get('numpy_compiled_extensions', False)
         python_requirements = p.get('python', [])
+        # TODO: Get supported platforms from requirements,
+        #       not from recipe template.
         packages.append(Package(p['name'],
                                 version=p['version'],
                                 setup_options=helpers,
@@ -311,22 +285,7 @@ def get_package_versions(requirements_path):
     return packages
 
 
-def _conda_python_build_string():
-    """
-    Construct the part of the conda build string that contains the python
-    version.
-    """
-    try:
-        conda_python_version = os.environ['CONDA_PY']
-    except KeyError:
-        raise RuntimeError('The environment variable CONDA_PY needs to be '
-                           'set before running this script.')
-    # Remove the period if it is in the python version.
-    conda_python_version = ''.join(conda_python_version.split('.'))
-    return 'py' + conda_python_version
-
-
-def render_template(package, template):
+def render_template(package, template, folder=TEMPLATE_FOLDER):
     """
     Render recipe components from jinja2 templates.
 
@@ -336,9 +295,11 @@ def render_template(package, template):
     package : Package
         :class:`Package` object for which template will be rendered.
     template : str
-        Name of template file, path relative to ``TEMPLATE_FOLDER``.
+        Name of template file, path relative to ``folder``.
+    folder : str
+        Path to folder containing template.
     """
-    full_template_path = os.path.abspath(TEMPLATE_FOLDER)
+    full_template_path = os.path.abspath(folder)
     jinja_env = Environment(loader=FileSystemLoader(full_template_path))
     tpl = jinja_env.get_template('/'.join([package.conda_name, template]))
     rendered = tpl.render(version=package.required_version, md5=package.md5)
@@ -385,13 +346,27 @@ def inject_python_requirements(package, recipe_path):
         yaml.dump(recipe, f, default_flow_style=False)
 
 
-def main(args):
+def main(args=None):
+    """
+    Generate recipes for packages either from recipe templates or by using
+    conda skeleton.
+    """
+    if args is None:
+        parser = ArgumentParser('command line tool for building packages.')
+        parser.add_argument('requirements',
+                            help='Path to requirements.yml')
+        parser.add_argument('--template-dir', default=TEMPLATE_FOLDER,
+                            help="Path the folder of recipe templates, if "
+                                 "any. Default: '{}'".format(TEMPLATE_FOLDER))
+        args = parser.parse_args()
+        template_dir = args.template_dir
+
     packages = get_package_versions(args.requirements)
 
     packages = [p for p in packages if p.supported_platform]
 
     try:
-        needs_recipe = os.listdir(TEMPLATE_FOLDER)
+        needs_recipe = os.listdir(template_dir)
     except OSError:
         needs_recipe = []
 
@@ -405,12 +380,12 @@ def main(args):
     for p in build_recipe:
         print('Writing recipe for {}.'.format(p.conda_name))
         recipe_path = os.path.join(RECIPE_FOLDER, p.conda_name)
-        template_path = os.path.join(TEMPLATE_FOLDER, p.conda_name)
+        template_path = os.path.join(template_dir, p.conda_name)
         os.mkdir(recipe_path)
         templates = [d for d in os.listdir(template_path) if
                      not d.startswith('.')]
         for template in templates:
-            rendered = render_template(p, template)
+            rendered = render_template(p, template, folder=template_dir)
             with open(os.path.join(recipe_path, template), 'wt') as f:
                 f.write(rendered)
 
@@ -423,8 +398,4 @@ def main(args):
 
 
 if __name__ == '__main__':
-    parser = ArgumentParser('command line tool for building packages.')
-    parser.add_argument('requirements',
-                        help='Full path to requirements.txt')
-    args = parser.parse_args()
-    main(args)
+    main()

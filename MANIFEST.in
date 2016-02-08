@@ -1,0 +1,19 @@
+include README.md
+include CHANGES.rst
+
+include ez_setup.py
+include ah_bootstrap.py
+include setup.cfg
+
+recursive-include *.pyx *.c *.pxd
+recursive-include docs *
+recursive-include licenses *
+recursive-include cextern *
+recursive-include scripts *
+graft extruder/data/
+
+prune build
+prune docs/_build
+prune docs/api
+
+global-exclude *.pyc *.o
