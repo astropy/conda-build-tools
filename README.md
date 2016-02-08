@@ -1,49 +1,43 @@
-Purpose
-=======
+# extruder
 
-This builder-bot makes `conda`_ packages for `astropy`_ affiliated packages.
+This is a pair of scripts to create and manage a set of packages to be built
+with `[conda build](https://github.com/conda/conda-build)`.
 
-Design decisions
-================
+The hard work is really done by `conda build` and
+[Obvious-CI](https://github.com/pelson/Obvious-CI)
+(soon to be replaced by [conda-build-all](https://github.com/SciTools/conda-build-all))
 
-+ `conda`_ packages will be made only for non-dev versions of affiliated
-  packages.
-+ A dev version is any version whose name contains letters (this is broader
-  than `PEP 440`_ but avoids the need for any intelligent parsing).
-+ `conda`_ recipes are avoided wherever possible to avoid duplicating
-  information already in the ``setup.py`` of most affiliated packages.
-+ Where possible, python scripts are used to do the work to avoid separate
-  Linux/Mac and Windows scripts.
+# Installation
 
-Maintaining the bot
-===================
 
-Update version of existing package
-----------------------------------
+## conda package
 
-Open a pull request that updates the version number of the package(s) to be
-built. Doing so will trigger builds of the new package(s) on all platforms.
-Packages are automatically upload to the `astropy binstar channel`_.
+Note there are a couple non-default channels you need to include to pick up
+the dependencies for extruder:
 
-Add a new affiliated package
-----------------------------
+```
+conda install -c astropy -c conda-forge extruder
+```
 
-1. Figure out how to build the `conda`_ package.
-    + First try ``python setup.py bdist_conda``.
-    + If that fails, try to convince the package maintainer to update
-      their ``setup.py`` so that this works.
-    + If that fails, try ``conda skeleton pypi packagename`` to generate
-      the initial recipe and modify as needed until
-      ``conda build packagename`` works.
-2. If ``python setup.py bdist_conda`` works you only need to open a pull
-   request on this repo that adds the package and version to
-   ``requirements.txt``.
-3. If the package needs a recipe to build you need to open a pull request that:
-    + Adds the package information to ``requirements.txt``
-    + Adds a template recipe for the package to ``recipe-templates``.
+## from source
 
-License
-=======
+Clone the repository, then:
+
+```
+python setup.py install
+```
+
+# Usage
+
+This package builds conda packages for a set of python packages using the
+continuous integration services Travis (for Linux and Mac) and Appveyor (for
+Windows).
+
+The packages to be built should be listed in a file called `requirements.yml`;
+a [sample one](extruder/data/template-build-files/requirements.yml) is
+included in this repository.
+
+# License
 
 This software is licensed under a BSD 3-clause license. See ``LICENSE.rst`` for details.
 
