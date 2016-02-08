@@ -82,7 +82,7 @@ Assuming you have followed the naming conventions for the files at the
 beginning of this section, all it takes to generate the recipes is
 
 ```
-$ extrude_recipes requirements.yml
+$ extrude_packages requirements.yml
 ```
 
 This creates a folder called `recipes` that contains a recipe for each package
@@ -91,8 +91,3 @@ in `requirements.yml`.
 # License
 
 This software is licensed under a BSD 3-clause license. See ``LICENSE.rst`` for details.
-
-.. _astropy: http://astropy.org
-.. _conda: http://conda.pydata.org/
-.. _PEP 440: https://www.python.org/dev/peps/pep-0440/
-.. _astropy binstar channel: http://binstar.org/astropy
