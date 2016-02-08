@@ -41,6 +41,9 @@ install:
     - cmd: conda config --set always_yes true
     - cmd: conda update --quiet conda
 
+    # Gets us Obvious-ci
+    - cmd: conda config --add channels conda-forge
+
     # Need this for astropy-helpers
     - cmd: conda config --add channels astropy
     - cmd: conda install astropy-helpers
