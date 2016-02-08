@@ -347,6 +347,10 @@ def inject_python_requirements(package, recipe_path):
 
 
 def main(args=None):
+    """
+    Generate recipes for packages either from recipe templates or by using
+    conda skeleton.
+    """
     if args is None:
         parser = ArgumentParser('command line tool for building packages.')
         parser.add_argument('requirements',
