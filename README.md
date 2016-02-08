@@ -62,7 +62,7 @@ construct the recipe; a template is useful when the recipe constructed by
 `conda skeleton` would fail. The recipe template should follow the usual rules
 for conda recipes; the values of the version, and the download link in the
 recipe from PyPI, will automatically be filled in from `requirements.yml`. A
-[sample recipe template](extruder/data/template-build-files/recipe_templates)
+[sample recipe template](extruder/data/template-build-files/recipe-templates)
 is included in this repository.
 
 ## Starting a new collection to make conda packages for
