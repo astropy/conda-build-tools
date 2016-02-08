@@ -43,6 +43,7 @@ install:
 
     # Need this for astropy-helpers
     - cmd: conda config --add channels astropy
+    - cmd: conda install astropy-helpers
 
     - cmd: conda install --quiet jinja2 conda-build
     # These installs are needed on windows but not other platforms.
