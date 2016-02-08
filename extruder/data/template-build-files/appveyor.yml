@@ -15,7 +15,7 @@ environment:
 
   BINSTAR_TOKEN:
     # Paste the security token for your destination conda channel here.
-    secure:
+    secure: "{{ appveyor_binstar_token }}"
 
   matrix:
     # Unfortunately, compiler/SDK configuration for 64 bit builds depends on

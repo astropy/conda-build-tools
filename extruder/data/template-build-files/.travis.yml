@@ -11,7 +11,7 @@ env:
         - CONDA_INSTALL_LOCN="${HOME}/miniconda"
 
         # Defines BINSTAR_TOKEN for your binstar channel
-        - secure: ""
+        - secure: "{{ travis_binstar_token }}"
 
         # The python build restriction MUST be set at the moment, though it
         # can have any value. The setting below avoids known-bad builds on
