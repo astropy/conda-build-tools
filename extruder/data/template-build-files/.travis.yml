@@ -6,7 +6,7 @@ os:
 
 env:
     global:
-        - DESTINATION_CONDA_CHANNEL = "astropy"
+        - DESTINATION_CONDA_CHANNEL = ""
         - TARGET_ARCH="x64"
         - CONDA_INSTALL_LOCN="${HOME}/miniconda"
 
