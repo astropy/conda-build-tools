@@ -43,8 +43,11 @@ install:
     - conda remove conda-build
     - conda install astropy-ci-extras conda-build
 
+    # Finally, install extruder
+    - cmd: conda install -c astropy extruder
+
 script:
     # Get ready to build.
-    - python affiliate-builder/prepare_packages.py requirements.yml
+    - extrude_recipes requirements.yml
     # Packages are uploaded as they are built.
     - if [[ -d recipes ]]; then obvci_conda_build_dir --build-condition="python $PYTHON_BUILD_RESTRICTIONS" recipes DESTINATION_CONDA_CHANNEL; fi
