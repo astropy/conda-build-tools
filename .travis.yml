@@ -7,6 +7,7 @@ os:
 env:
     global:
         - TARGET_ARCH="x64"
+        - secure: "c/MXanxumEXl7l3vXv4Bx5cCm9RBvz4bBDrAbzSf9SjqS5Xq5Fv0jbetExNKzgjKzGQ3rv8HYhpOeVabNxHEmqqI8rOl79J/L1ba0XClTIBbkeO/rM2HS0LuS95FSvx4+eeAm6m+5xVBAJW3EXVssRt56T3y69JJD0+2pEtbUCT7I88fnb1llWRcnJsZh5sB8qppklYIc1qxofcw8EiCIBwY1wHGwQ/Jq4n6VutAjEnIUaK6cX7XuO8mvyhYEcg2gww4qcSiMkb/8KcXl9t8fSshLC1tNTwLhmA4dUo0Dbgow0xtUNqzy3L/TEWhfj9hBhGijexhMSrLwMTAEgIxPNiAsrHv3EOgX2sd/UXQo+vZ96V35apfRzJrojtGQhgIEUc36tCNfH3GcnX7jWZfaPySqohZAsj/RFrFPVkhW64VcdCAyhHc3UBTy3odmiiMYkln+cXJ/G3+CENDNeR/5uwKYQ1Ez79J1KrBIXrRYBsEAR6VCbRZ/mu/ea7cSzLeo9lIu4uyiLhLLvCua4U0/YkTJFebdpR+YNDyNVNuYVXU3XQCHRhi5DbSiNWDL1O0IxKDaTdir4dIx3+UOJCdkdJbIYH17k52u9of/52KYxssVeFMj62QjYgGiFwdTSjX7hClL3LfcF63HcJNoEu0hvtavF3qMyeduoQixrRX/Ks="
         - CONDA_INSTALL_LOCN="${HOME}/miniconda"
 
 install:
@@ -32,3 +33,6 @@ install:
 script:
     # Not much of a real test yet, just try to build myself...
     - conda build extruder.recipe
+    - echo $TRAVIS_TAG
+    # If this build is because of a tag, upload the build if it succeeds.
+    - if [ -z "$TRAVIS_TAG" ]; then anaconda upload -u astropy $(find $CONDA_INSTALL_LOCN/conda-bld -name \*extruder\*.tar.bz2); fi
