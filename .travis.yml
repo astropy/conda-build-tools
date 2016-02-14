@@ -28,11 +28,13 @@ install:
     - conda update --quiet conda
 
     # Install a couple of dependencies we need for sure.
-    - conda install --quiet --yes jinja2 conda-build
+    - conda install --quiet --yes jinja2 conda-build anaconda-client
 
 script:
     # Not much of a real test yet, just try to build myself...
     - conda build extruder.recipe
+
+after_success:
     - echo $TRAVIS_TAG
     # If this build is because of a tag, upload the build if it succeeds.
-    - if [ -z "$TRAVIS_TAG" ]; then anaconda upload -u astropy $(find $CONDA_INSTALL_LOCN/conda-bld -name \*extruder\*.tar.bz2); fi
+    - if [ -z "$TRAVIS_TAG" ]; then anaconda upload -t $BINSTAR_TOKEN -u astropy $(conda build --output extuder.recipe); fi
