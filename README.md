@@ -7,6 +7,12 @@ The hard work is really done by `conda build` and
 [Obvious-CI](https://github.com/pelson/Obvious-CI)
 (soon to be replaced by [conda-build-all](https://github.com/SciTools/conda-build-all))
 
+### extruder build status
+
+[![Build status](https://ci.appveyor.com/api/projects/status/vtkg503opk2564mn?svg=true)](https://ci.appveyor.com/project/Astropy/conda-build-tools)
+
+[![Build Status](https://travis-ci.org/astropy/conda-build-tools.svg?branch=master)](https://travis-ci.org/astropy/conda-build-tools)
+
 # Installation
 
 
