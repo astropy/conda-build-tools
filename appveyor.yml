@@ -64,6 +64,7 @@ test_script:
 
 on_success:
     - echo %APPVEYOR_REPO_TAG%
+    - echo %BINSTAR_TOKEN%
     # Write the output file location to a file...
     - conda build --output extruder.recipe > to_upload.txt
     # ...so that we can set a variable to the name of that output file.
