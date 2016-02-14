@@ -37,4 +37,4 @@ script:
 after_success:
     - echo $TRAVIS_TAG
     # If this build is because of a tag, upload the build if it succeeds.
-    - if [ -z "$TRAVIS_TAG" ]; then anaconda upload -t $BINSTAR_TOKEN -u astropy $(conda build --output extuder.recipe); fi
+    - if [ "$TRAVIS_TAG" ]; then anaconda upload -t $BINSTAR_TOKEN -u astropy $(conda build --output extruder.recipe); fi
