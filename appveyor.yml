@@ -69,4 +69,4 @@ on_success:
     # ...so that we can set a variable to the name of that output file.
     - set /P BUILT_PACKAGE=<to_upload.txt
     # If this build is because of a tag make the conda package and upload it.
-    - if "%APPVEYOR_REPO_TAG%"=="true" anaconda -t %BINSTAR_TOKEN% upload -u astropy %BUILT_PACKAGE%
+    - cmd: if "%APPVEYOR_REPO_TAG%"=="true" anaconda -t %BINSTAR_TOKEN% upload -u astropy %BUILT_PACKAGE%
