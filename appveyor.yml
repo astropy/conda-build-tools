@@ -8,7 +8,7 @@ environment:
   CMD_IN_ENV: cmd /E:ON /V:ON /C Obvious-CI\scripts\obvci_appveyor_python_build_env.cmd
 
   BINSTAR_TOKEN:
-    secure: eNFZ6uLsFUgtwjXf6n/vayT97T4sSX1nG3iv8Hfp2vWKIZJIQ6jmCeL/agYmnbiX
+    secure: In551w7v371boSMxAcNcHccXMbcLyVImifhayYopb02ZqkUGYV8QyDu1tjVbKaJz
 
   matrix:
     # Unfortunately, compiler/SDK configuration for 64 bit builds depends on
@@ -64,7 +64,6 @@ test_script:
 
 on_success:
     - echo %APPVEYOR_REPO_TAG%
-    - echo %BINSTAR_TOKEN%
     # Write the output file location to a file...
     - conda build --output extruder.recipe > to_upload.txt
     # ...so that we can set a variable to the name of that output file.
