@@ -2,7 +2,7 @@
 
 environment:
   # Anaconda.org channel to which packages should be uploaded.
-  DESTINATION_CONDA_CHANNEL: "astropy"
+  DESTINATION_CONDA_CHANNEL: ""
 
   # Appveyor machines come with miniconda already installed.
   CONDA_INSTALL_LOCN: "C:\\Miniconda-x64"
@@ -62,11 +62,14 @@ install:
     # on astropy-ci-extras.
     - cmd: conda install -c astropy-ci-extras conda-build=1.18.1
 
+    # Finally, install extruder
+    - cmd: conda install -c astropy extruder
+
 # Skip .NET project specific build phase.
 build: off
 
 test_script:
     # Get ready to build.
-    - "%CMD_IN_ENV% python affiliate-builder\\prepare_packages.py requirements.yml"
+    - "%CMD_IN_ENV% extrude_recipes requirements.yml"
     # Packages are uploaded as they are built.
     - if exist recipes %CMD_IN_ENV% obvci_conda_build_dir --build-condition="python %PYTHON_BUILD_RESTRICTIONS%" recipes DESTINATION_CONDA_CHANNEL

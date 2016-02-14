@@ -27,7 +27,7 @@ test:
     - extruder
   commands:
     - extrude_template --help
-    - extrude_packages --help
+    - extrude_recipes --help
 
 about:
   license: BSD-3

@@ -7,6 +7,9 @@ environment:
   # Need this to set up compilation on Windows.
   CMD_IN_ENV: cmd /E:ON /V:ON /C Obvious-CI\scripts\obvci_appveyor_python_build_env.cmd
 
+  BINSTAR_TOKEN:
+    secure: eNFZ6uLsFUgtwjXf6n/vayT97T4sSX1nG3iv8Hfp2vWKIZJIQ6jmCeL/agYmnbiX
+
   matrix:
     # Unfortunately, compiler/SDK configuration for 64 bit builds depends on
     # python version. Right now conda build does not configure the SDK, and
@@ -48,7 +51,7 @@ install:
     - cmd: conda config --add channels astropy
     - cmd: conda install astropy-helpers
 
-    - cmd: conda install --quiet jinja2 conda-build
+    - cmd: conda install --quiet jinja2 conda-build anaconda-client
     # These installs are needed on windows but not other platforms.
     - cmd: conda install patch psutil
 
@@ -58,3 +61,12 @@ build: off
 test_script:
     # Not much of a real test yet, just try to build myself...
     - "%CMD_IN_ENV% conda build extruder.recipe"
+
+on_success:
+    - echo %APPVEYOR_REPO_TAG%
+    # Write the output file location to a file...
+    - conda build --output extruder.recipe > to_upload.txt
+    # ...so that we can set a variable to the name of that output file.
+    - set /P BUILT_PACKAGE=<to_upload.txt
+    # If this build is because of a tag make the conda package and upload it.
+    - if %APPVEYOR_REPO_TAG%=="true" anaconda -t %BINSTAR_TOKEN% -u astropy %BUILT_PACKAGE%
