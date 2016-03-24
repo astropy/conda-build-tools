@@ -321,7 +321,8 @@ def generate_skeleton(package, path):
         Path to which the recipe should be written.
     """
 
-    additional_arguments = ['--version', str(package.required_version),
+    additional_arguments = ['--all-extras',
+                            '--version', str(package.required_version),
                             '--output-dir', path]
 
     if package.setup_options:
