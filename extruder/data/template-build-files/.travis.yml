@@ -1,5 +1,7 @@
 # The language in this case has no bearing - we are going to be making use of "conda" for a
 # python distribution for the scientific python stack.
+language: c
+
 os:
   - linux
   - osx
@@ -34,20 +36,23 @@ install:
     - conda install --quiet --yes astropy anaconda-client jinja2 cython pycrypto
 
     - conda config --add channels astropy
+    - conda config --add channels conda-forge
 
     # Install obvious-ci.
     - conda install -c conda-forge obvious-ci
 
-    # Install custom version of conda-build for now (need to be able to pass
-    # options to setup.py)
-    - conda remove conda-build
-    - conda install astropy-ci-extras conda-build
 
     # Finally, install extruder
-    - cmd: conda install -c astropy extruder
+    - conda install -c astropy extruder
+
+    # Install custom version of conda-build for now (need to be able to pass
+    # options to setup.py)
+    - conda remove --force conda-build
+    - conda install --force openssl=1.0.2d
+    - conda install -c astropy-ci-extras --override-channels conda-build=1.18.1
 
 script:
     # Get ready to build.
     - extrude_recipes requirements.yml
     # Packages are uploaded as they are built.
-    - if [[ -d recipes ]]; then obvci_conda_build_dir --build-condition="python $PYTHON_BUILD_RESTRICTIONS" recipes DESTINATION_CONDA_CHANNEL; fi
+    - if [[ -d recipes ]]; then obvci_conda_build_dir --build-condition="python $PYTHON_BUILD_RESTRICTIONS" recipes $DESTINATION_CONDA_CHANNEL; fi

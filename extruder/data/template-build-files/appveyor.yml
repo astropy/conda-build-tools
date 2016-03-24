@@ -51,19 +51,18 @@ install:
     - cmd: conda config --set always_yes true
     - cmd: conda update --quiet conda
     - cmd: conda config --add channels astropy
+    - cmd: conda config --add channels conda-forge
     - cmd: conda install --quiet astropy anaconda-client jinja2 cython
     # These installs are needed on windows but not other platforms.
     - cmd: conda install patch psutil
     - cmd: conda install -c conda-forge obvious-ci
-    # Install custom version of conda-build for now (need to be able to pass
-    # options to setup.py)
-    # Instead of building from source -- which does not seem to create
-    # the scripts necessary to run conda skeleton -- there is a package
-    # on astropy-ci-extras.
-    - cmd: conda install -c astropy-ci-extras conda-build=1.18.1
 
     # Finally, install extruder
-    - cmd: conda install -c astropy extruder
+    - cmd: conda install extruder
+
+    # Install custom version of conda-build for now (need to be able to pass
+    # options to setup.py)
+    - cmd: conda install -c astropy-ci-extras conda-build=1.18.1
 
 # Skip .NET project specific build phase.
 build: off
@@ -72,4 +71,4 @@ test_script:
     # Get ready to build.
     - "%CMD_IN_ENV% extrude_recipes requirements.yml"
     # Packages are uploaded as they are built.
-    - if exist recipes %CMD_IN_ENV% obvci_conda_build_dir --build-condition="python %PYTHON_BUILD_RESTRICTIONS%" recipes DESTINATION_CONDA_CHANNEL
+    - if exist recipes %CMD_IN_ENV% obvci_conda_build_dir --build-condition="python %PYTHON_BUILD_RESTRICTIONS%" recipes %DESTINATION_CONDA_CHANNEL%
