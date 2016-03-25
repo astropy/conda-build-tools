@@ -65,7 +65,8 @@ class Package(object):
     def __init__(self, pypi_name, version=None,
                  numpy_compiled_extensions=False,
                  setup_options=None,
-                 python_requirements=None):
+                 python_requirements=None,
+                 numpy_requirements=None):
         self._pypi_name = pypi_name
         self.required_version = version
         self._build = False
@@ -77,6 +78,7 @@ class Package(object):
         self._numpy_compiled_extensions = numpy_compiled_extensions
         self._setup_options = setup_options
         self._python_requirements = python_requirements
+        self._numpy_requirements = numpy_requirements
 
     @property
     def pypi_name(self):
@@ -128,6 +130,10 @@ class Package(object):
     @property
     def python_requirements(self):
         return self._python_requirements
+
+    @property
+    def numpy_requirements(self):
+        return self._numpy_requirements
 
     @property
     def is_dev(self):
@@ -274,6 +280,7 @@ def get_package_versions(requirements_path):
         helpers = p.get('setup_options', None)
         numpy_extensions = p.get('numpy_compiled_extensions', False)
         python_requirements = p.get('python', [])
+        numpy_requirements = p.get('numpy_build_restrictions', [])
         version = p.get('version', None)
         # TODO: Get supported platforms from requirements,
         #       not from recipe template.
@@ -281,7 +288,8 @@ def get_package_versions(requirements_path):
                                 version=version,
                                 setup_options=helpers,
                                 numpy_compiled_extensions=numpy_extensions,
-                                python_requirements=python_requirements))
+                                python_requirements=python_requirements,
+                                numpy_requirements=numpy_requirements))
 
     return packages
 
@@ -336,13 +344,26 @@ def generate_skeleton(package, path):
                           additional_arguments)
 
 
-def inject_python_requirements(package, recipe_path):
+def inject_requirements(package, recipe_path):
+    """
+    Two packages get special treatment so that restrictions on build versions,
+    which may be more restrictive than the requirements of the package itself.
+
+    Those two packages are python and numpy.
+    """
     meta_path = os.path.join(recipe_path, 'meta.yaml')
     with open(meta_path) as f:
         recipe = yaml.safe_load(f)
-    python_spec = ' '.join(['python', package.python_requirements])
-    for section in ['build', 'run']:
-        recipe['requirements'][section].append(python_spec)
+
+    spec = []
+    if package.python_requirements:
+        spec.append(' '.join(['python', package.python_requirements]))
+    if package.numpy_requirements:
+        spec.append(' '.join(['numpy', package.numpy_requirements]))
+
+    if spec:
+        for section in ['build', 'run']:
+            recipe['requirements'][section].extend(spec)
 
     with open(meta_path, 'w') as f:
         yaml.dump(recipe, f, default_flow_style=False)
@@ -395,9 +416,8 @@ def main(args=None):
     for p in build_skeleton:
         recipe_destination = os.path.join(RECIPE_FOLDER, p.conda_name)
         generate_skeleton(p, RECIPE_FOLDER)
-        if p.python_requirements:
-            inject_python_requirements(p, recipe_destination)
 
+        inject_requirements(p, recipe_destination)
 
 if __name__ == '__main__':
     main()
