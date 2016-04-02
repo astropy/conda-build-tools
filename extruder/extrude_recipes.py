@@ -411,6 +411,8 @@ def main(args=None):
             rendered = render_template(p, template, folder=template_dir)
             with open(os.path.join(recipe_path, template), 'wt') as f:
                 f.write(rendered)
+        inject_requirements(p, recipe_path)
+
 
     # Use conda skeleton to generate recipes for the simple cases
     for p in build_skeleton:
