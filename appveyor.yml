@@ -65,7 +65,8 @@ test_script:
 on_success:
     - echo %APPVEYOR_REPO_TAG%
     # Write the output file location to a file...
-    - conda build --output extruder.recipe > to_upload.txt
+    # TODO: Remove pipe into last once this is fixed: https://github.com/conda/conda-build/issues/949
+    - conda build --output extruder.recipe | more +2 > to_upload.txt
     # ...so that we can set a variable to the name of that output file.
     - set /P BUILT_PACKAGE=<to_upload.txt
     # If this build is because of a tag make the conda package and upload it.

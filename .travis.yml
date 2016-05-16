@@ -36,5 +36,9 @@ script:
 
 after_success:
     - echo $TRAVIS_TAG
+    # TODO: Remove once this is fixed: https://github.com/conda/conda-build/issues/949
+    # Get ONLY the name of the file that was built...
+    - export CONDA_PACKAGE=`conda build --output extruder.recipe | grep bz2`
+    - echo $CONDA_PACKAGE
     # If this build is because of a tag, upload the build if it succeeds.
-    - if [ "$TRAVIS_TAG" ]; then anaconda -t $BINSTAR_TOKEN upload -u astropy $(conda build --output extruder.recipe); fi
+    - if [ "$TRAVIS_TAG" ]; then anaconda -t $BINSTAR_TOKEN upload -u astropy $CONDA_PACKAGE; fi
