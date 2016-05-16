@@ -66,7 +66,8 @@ class Package(object):
                  numpy_compiled_extensions=False,
                  setup_options=None,
                  python_requirements=None,
-                 numpy_requirements=None):
+                 numpy_requirements=None,
+                 excluded_platforms=None):
         self._pypi_name = pypi_name
         self.required_version = version
         self._build = False
@@ -79,6 +80,7 @@ class Package(object):
         self._setup_options = setup_options
         self._python_requirements = python_requirements
         self._numpy_requirements = numpy_requirements
+        self._excluded_platforms = excluded_platforms or []
 
     @property
     def pypi_name(self):
@@ -167,6 +169,8 @@ class Package(object):
         Checks for build information by looking at recipe *templates*, which
         is probably not really the way to go...might be more generalizable if
         it looked at recipes instead.
+
+        Also excludes any platforms indicated in requirements.yml,
         """
         # Lazy memoization...
         if self._build_platforms:
@@ -178,6 +182,8 @@ class Package(object):
             platforms = platform_info['extra']['platforms']
         except KeyError:
             platforms = ALL_PLATFORMS
+
+        platforms = list(set(platforms) - set(self._excluded_platforms))
 
         self._build_platforms = platforms
         return self._build_platforms
@@ -282,6 +288,7 @@ def get_package_versions(requirements_path):
         python_requirements = p.get('python', [])
         numpy_requirements = p.get('numpy_build_restrictions', [])
         version = p.get('version', None)
+        excluded_platforms = p.get('excluded_platforms', [])
         # TODO: Get supported platforms from requirements,
         #       not from recipe template.
         packages.append(Package(p['name'],
@@ -289,7 +296,8 @@ def get_package_versions(requirements_path):
                                 setup_options=helpers,
                                 numpy_compiled_extensions=numpy_extensions,
                                 python_requirements=python_requirements,
-                                numpy_requirements=numpy_requirements))
+                                numpy_requirements=numpy_requirements,
+                                excluded_platforms=excluded_platforms))
 
     return packages
 
