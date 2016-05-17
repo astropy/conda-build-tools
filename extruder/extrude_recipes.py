@@ -7,7 +7,7 @@ import re
 import subprocess
 from collections import OrderedDict
 
-import yaml
+from ruamel import yaml
 
 from conda import config
 
@@ -20,19 +20,6 @@ PYPI_XMLRPC = 'https://pypi.python.org/pypi'
 TEMPLATE_FOLDER = 'recipe_templates'
 RECIPE_FOLDER = 'recipes'
 ALL_PLATFORMS = ['osx-64', 'linux-64', 'linux-32', 'win-32', 'win-64']
-
-
-def setup_yaml():
-    """
-    Enable yaml to serialize an OrderedDict as a mapping.
-
-    Cut and paste directly from: http://stackoverflow.com/a/31605131
-
-    It in turn was condensed version of: http://stackoverflow.com/a/8661021
-    """
-    represent_dict_order = lambda self, data:  \
-        self.represent_mapping('tag:yaml.org,2002:map', data.items())
-    yaml.add_representer(OrderedDict, represent_dict_order)
 
 
 def get_pypi_info(name):
@@ -361,7 +348,7 @@ def inject_requirements(package, recipe_path):
     """
     meta_path = os.path.join(recipe_path, 'meta.yaml')
     with open(meta_path) as f:
-        recipe = yaml.safe_load(f)
+        recipe = yaml.load(f, yaml.RoundTripLoader)
 
     spec = []
     if package.python_requirements:
@@ -374,7 +361,8 @@ def inject_requirements(package, recipe_path):
             recipe['requirements'][section].extend(spec)
 
     with open(meta_path, 'w') as f:
-        yaml.dump(recipe, f, default_flow_style=False)
+        yaml.dump(recipe, f, Dumper=yaml.RoundTripDumper,
+                  default_flow_style=False)
 
 
 def main(args=None):

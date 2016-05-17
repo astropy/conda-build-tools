@@ -28,7 +28,7 @@ install:
     - conda update --quiet conda
 
     # Install a couple of dependencies we need for sure.
-    - conda install --quiet --yes jinja2 conda-build anaconda-client
+    - conda install --quiet --yes jinja2 conda-build anaconda-client ruamel.yaml
 
 script:
     # Not much of a real test yet, just try to build myself...

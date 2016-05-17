@@ -21,6 +21,8 @@ requirements:
         - anaconda-client
         - obvious-ci
         - six
+        - ruamel.yaml
+        - ruamel.ordereddict   # [py26 or py27]
 
 test:
   imports:
