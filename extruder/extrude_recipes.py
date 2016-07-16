@@ -54,7 +54,8 @@ class Package(object):
                  setup_options=None,
                  python_requirements=None,
                  numpy_requirements=None,
-                 excluded_platforms=None):
+                 excluded_platforms=None,
+                 include_extras=True):
         self._pypi_name = pypi_name
         self.required_version = version
         self._build = False
@@ -68,6 +69,7 @@ class Package(object):
         self._python_requirements = python_requirements
         self._numpy_requirements = numpy_requirements
         self._excluded_platforms = excluded_platforms or []
+        self._include_extras = include_extras
 
     @property
     def pypi_name(self):
@@ -123,6 +125,10 @@ class Package(object):
     @property
     def numpy_requirements(self):
         return self._numpy_requirements
+
+    @property
+    def include_extras(self):
+        return self._include_extras
 
     @property
     def is_dev(self):
@@ -182,7 +188,7 @@ class Package(object):
         try:
             pythons = self.extra_meta['extra']['pythons']
         except KeyError:
-            pythons = ["27", "34"]
+            pythons = ["27", "35"]
 
         # Make sure version is always a string so it can be compared
         # to CONDA_PY later.
@@ -276,6 +282,8 @@ def get_package_versions(requirements_path):
         numpy_requirements = p.get('numpy_build_restrictions', [])
         version = p.get('version', None)
         excluded_platforms = p.get('excluded_platforms', [])
+        include_extras = p.get('include_extras', True)
+
         # TODO: Get supported platforms from requirements,
         #       not from recipe template.
         packages.append(Package(p['name'],
@@ -284,7 +292,8 @@ def get_package_versions(requirements_path):
                                 numpy_compiled_extensions=numpy_extensions,
                                 python_requirements=python_requirements,
                                 numpy_requirements=numpy_requirements,
-                                excluded_platforms=excluded_platforms))
+                                excluded_platforms=excluded_platforms,
+                                include_extras=include_extras))
 
     return packages
 
@@ -325,9 +334,11 @@ def generate_skeleton(package, path):
         Path to which the recipe should be written.
     """
 
-    additional_arguments = ['--all-extras',
-                            '--version', str(package.required_version),
+    additional_arguments = ['--version', str(package.required_version),
                             '--output-dir', path]
+
+    if package.include_extras:
+        additional_arguments.append('--all-extras')
 
     if package.setup_options:
         additional_arguments.extend(['--setup-options={}'.format(package.setup_options)])

@@ -38,6 +38,12 @@
     - 'linux-64'
     - 'osx-64'
 
+  # By default the --all-extras option is passed to setup because installing
+  # conda packages is fast and easy. This may be problematic for some packages
+  # for which optional dependencies are not available on some platforms. If
+  # that is the case, you can turn of extras here.
+  include_extras: true
+
 # An example of a simple requirement.
 
 - name: hgtools
