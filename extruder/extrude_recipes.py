@@ -7,13 +7,15 @@ import re
 import subprocess
 from collections import OrderedDict
 
+import requests
+
 from ruamel import yaml
 
 from conda import config
 
 from six.moves import xmlrpc_client as xmlrpclib
 
-from jinja2 import Environment, FileSystemLoader
+from jinja2 import Environment, FileSystemLoader, Template
 from jinja2.exceptions import TemplateNotFound
 
 PYPI_XMLRPC = 'https://pypi.python.org/pypi'
@@ -21,6 +23,7 @@ TEMPLATE_FOLDER = 'recipe_templates'
 RECIPE_FOLDER = 'recipes'
 ALL_PLATFORMS = ['osx-64', 'linux-64', 'linux-32', 'win-32', 'win-64']
 
+CONDA_FORGE_RECIPE_BASE = 'https://raw.githubusercontent.com/conda-forge/{}-feedstock/master/recipe/meta.yaml'
 
 def get_pypi_info(name):
     client = xmlrpclib.ServerProxy(PYPI_XMLRPC)
@@ -378,8 +381,8 @@ def inject_requirements(package, recipe_path):
 
 def main(args=None):
     """
-    Generate recipes for packages either from recipe templates or by using
-    conda skeleton.
+    Generate recipes for packages either from recipe templates, by copying
+    from conda-forge, or by using conda skeleton.
     """
     if args is None:
         parser = ArgumentParser('command line tool for building packages.')
@@ -401,9 +404,9 @@ def main(args=None):
         needs_recipe = []
 
     build_recipe = [p for p in packages if p.conda_name in needs_recipe]
-    build_skeleton = [p for p in packages if p.conda_name not in needs_recipe]
+    build_not_recipe = [p for p in packages if p.conda_name not in needs_recipe]
 
-    if build_recipe or build_skeleton:
+    if build_recipe or build_not_recipe:
         os.mkdir(RECIPE_FOLDER)
 
     # Write recipes from templates.
@@ -420,6 +423,41 @@ def main(args=None):
                 f.write(rendered)
         inject_requirements(p, recipe_path)
 
+    # check conda-forge for a recipe, and if it is not found, add to the skeleton
+    # list.
+    build_skeleton = []
+    for p in build_not_recipe:
+        # Try grabbing the recipe from a URL
+        try:
+            recipe_meta = requests.get(CONDA_FORGE_RECIPE_BASE.format(p.conda_name))
+            recipe_meta.raise_for_status()
+        except requests.HTTPError:
+            build_skeleton.append(p)
+            continue
+
+        recipe_meta = recipe_meta.text
+
+        # Check the version number of the recipe and perhaps modify it
+        version_from_recipe = re.search('version = "(.*)"', recipe_meta)
+        version_from_recipe = version_from_recipe.group(1)
+
+        assert p.required_version == version_from_recipe
+
+        print(recipe_meta)
+
+        # render the recipe
+        # The environ below is for the emcee recipe.
+        rendered = Template(recipe_meta).render(environ=os.environ)
+        # write the recipe
+        recipe_path = os.path.join(RECIPE_FOLDER, p.conda_name)
+
+
+        os.mkdir(recipe_path)
+        with open(os.path.join(recipe_path, 'meta.yaml'), 'w') as f:
+            f.writelines(rendered)
+
+        # inject requirements
+        inject_requirements(p, recipe_path)
 
     # Use conda skeleton to generate recipes for the simple cases
     for p in build_skeleton:
