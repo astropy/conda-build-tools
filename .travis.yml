@@ -23,12 +23,12 @@ install:
 
     # Need this for astropy-helpers
     - conda config --add channels astropy
-    - conda install astropy-helpers
+    - conda install astropy-helpers anaconda-client
 
     - conda update --quiet conda
 
     # Install a couple of dependencies we need for sure.
-    - conda install --quiet --yes jinja2 conda-build anaconda-client ruamel.yaml
+    - conda install --quiet --yes jinja2 conda-build ruamel.yaml
 
 script:
     # Not much of a real test yet, just try to build myself...
