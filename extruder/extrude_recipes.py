@@ -435,15 +435,20 @@ def main(args=None):
             build_skeleton.append(p)
             continue
 
+        print("Pulling recipe from conda-forge for {}".format(p.conda_name))
         recipe_meta = recipe_meta.text
 
         # Check the version number of the recipe and perhaps modify it
         version_from_recipe = re.search('version = "(.*)"', recipe_meta)
+        if not version_from_recipe:
+            # Try looking for the recipe in the yaml instead of the jinja template.
+            version_from_recipe = re.search('^\s+version: (\d.*)$', recipe_meta)
+            print(recipe_meta)
+
         version_from_recipe = version_from_recipe.group(1)
 
+        print("recipe version: {}\nrequirements version: {}".format(version_from_recipe, p.required_version))
         assert p.required_version == version_from_recipe
-
-        print(recipe_meta)
 
         # render the recipe
         # The environ below is for the emcee recipe.
@@ -461,6 +466,7 @@ def main(args=None):
 
     # Use conda skeleton to generate recipes for the simple cases
     for p in build_skeleton:
+        print('generating skeleton for {}'.format(p.conda_name))
         recipe_destination = os.path.join(RECIPE_FOLDER, p.conda_name)
         generate_skeleton(p, RECIPE_FOLDER)
 
