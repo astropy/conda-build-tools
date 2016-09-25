@@ -4,8 +4,7 @@ This is a pair of scripts to create and manage a set of packages to be built
 with [`conda build`](https://github.com/conda/conda-build).
 
 The hard work is really done by `conda build` and
-[Obvious-CI](https://github.com/pelson/Obvious-CI)
-(soon to be replaced by [conda-build-all](https://github.com/SciTools/conda-build-all))
+[conda-build-all](https://github.com/SciTools/conda-build-all)
 
 ### extruder build status
 

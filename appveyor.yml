@@ -44,14 +44,11 @@ install:
     - cmd: conda config --set always_yes true
     - cmd: conda update --quiet conda
 
-    # Gets us Obvious-ci
-    - cmd: conda config --add channels conda-forge
-
     # Need this for astropy-helpers
     - cmd: conda config --add channels astropy
     - cmd: conda install astropy-helpers
 
-    - cmd: conda install --quiet jinja2 conda-build=1.21.5 anaconda-client ruamel.yaml
+    - cmd: conda install --quiet jinja2 conda-build=2.0* anaconda-client ruamel.yaml
     # These installs are needed on windows but not other platforms.
     - cmd: conda install patch psutil
 

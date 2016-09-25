@@ -18,9 +18,6 @@ install:
     - export PATH=${CONDA_INSTALL_LOCN}/bin:$PATH
     - conda config --set always_yes true
 
-    # Gets us Obvious-ci
-    - conda config --add channels conda-forge
-
     # Need this for astropy-helpers
     - conda config --add channels astropy
     - conda install astropy-helpers anaconda-client
@@ -28,7 +25,7 @@ install:
     - conda update --quiet conda
 
     # Install a couple of dependencies we need for sure.
-    - conda install --quiet --yes jinja2 conda-build=1.21.5 ruamel.yaml
+    - conda install --quiet --yes jinja2 conda-build=2.0* ruamel.yaml
 
 script:
     # Not much of a real test yet, just try to build myself...
