@@ -4,14 +4,13 @@ from __future__ import (division, print_function, absolute_import)
 from argparse import ArgumentParser
 import os
 import re
-import subprocess
-from collections import OrderedDict
 
 import requests
 
 from ruamel import yaml
 
 from conda import config
+from conda_build.api import skeletonize
 
 from six.moves import xmlrpc_client as xmlrpclib
 
@@ -339,18 +338,26 @@ def generate_skeleton(package, path):
 
     additional_arguments = ['--version', str(package.required_version),
                             '--output-dir', path]
-
+    additional_arguments = {}
     if package.include_extras:
-        additional_arguments.append('--all-extras')
+        additional_arguments['all_extras'] = True
+
+    # Options below ensure an egg is not included in the built package
+    additional_arguments['setup_options'] = [
+        '--single-version-externally-managed',
+        '--record rec.txt'
+    ]
 
     if package.setup_options:
-        additional_arguments.extend(['--setup-options={}'.format(package.setup_options)])
+        additional_arguments['setup_options'].append(package.setup_options)
 
     if package.numpy_compiled_extensions:
-        additional_arguments.append('--pin-numpy')
+        additional_arguments['pin_numpy'] = True
 
-    subprocess.check_call(["conda", "skeleton", "pypi", package.pypi_name] +
-                          additional_arguments)
+    skeletonize(package.pypi_name, 'pypi',
+                output_dir=path,
+                version=str(package.required_version),
+                **additional_arguments)
 
 
 def inject_requirements(package, recipe_path):
