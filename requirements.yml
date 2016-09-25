@@ -33,16 +33,18 @@
   # platforms would result in no builds!
 
   # Default, if omitted, is to build on all platforms listed below.
+
   excluded_platforms:
     - 'win-64'
     - 'linux-64'
     - 'osx-64'
 
-  # By default the --all-extras option is passed to setup because installing
-  # conda packages is fast and easy. This may be problematic for some packages
-  # for which optional dependencies are not available on some platforms. If
-  # that is the case, you can turn of extras here.
-  include_extras: true
+  # By default the --all-extras option is not passed to setup, as it was
+  # problematic for some packages for which optional dependencies are not
+  # available on some platforms. If you know that is not the case for your
+  # package, you can turn on extras here.
+
+  include_extras: true   # Defaults to false if omitted.
 
 # An example of a simple requirement.
 

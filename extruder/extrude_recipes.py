@@ -58,7 +58,7 @@ class Package(object):
                  python_requirements=None,
                  numpy_requirements=None,
                  excluded_platforms=None,
-                 include_extras=True):
+                 include_extras=False):
         self._pypi_name = pypi_name
         self.required_version = version
         self._build = False
@@ -285,7 +285,7 @@ def get_package_versions(requirements_path):
         numpy_requirements = p.get('numpy_build_restrictions', [])
         version = p.get('version', None)
         excluded_platforms = p.get('excluded_platforms', [])
-        include_extras = p.get('include_extras', True)
+        include_extras = p.get('include_extras', False)
 
         # TODO: Get supported platforms from requirements,
         #       not from recipe template.
