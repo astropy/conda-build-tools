@@ -63,8 +63,9 @@ test_script:
 
 on_success:
     - echo %APPVEYOR_REPO_TAG%
-    # Write the output file location to a file...
-    - conda build --output extruder.recipe > to_upload.txt
+    # Write the output file location to a file...cannot simply use conda build --output
+    # because astropy_helpers prints out a message when it is freezing the version number during setup.
+    - python -c "from conda_build.api import get_output_file_path; p=get_output_file_path('extruder.recipe'); f=open('to_upload.txt', 'wb');f.write(p)"
     # ...so that we can set a variable to the name of that output file.
     - set /P BUILT_PACKAGE=<to_upload.txt
     - echo %BUILT_PACKAGE%
