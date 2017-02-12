@@ -97,7 +97,10 @@ class Package(object):
 
     @required_version.setter
     def required_version(self, value):
-        self._required_version = str(value).strip()
+        if value is not None:
+            self._required_version = str(value).strip()
+        else:
+            self._required_version = value
 
     @property
     def build(self):
