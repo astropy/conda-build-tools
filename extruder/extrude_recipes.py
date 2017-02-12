@@ -31,7 +31,7 @@ CONDA_FORGE_FEEDSTOCK_TARBALL = ('https://github.com/conda-forge/{}-feedstock'
 
 
 def get_pypi_info(name):
-    client = xmlrpclib.ServerProxy(PYPI_XMLRPC)
+    client = xmlrpclib.ServerProxy(PYPI_XMLRPC, allow_none=True)
     pypi_stable = client.package_releases(name)
     try:
         return pypi_stable[0]
