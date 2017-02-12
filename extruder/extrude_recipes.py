@@ -4,6 +4,10 @@ from __future__ import (division, print_function, absolute_import)
 from argparse import ArgumentParser
 import os
 import re
+import tarfile
+import tempfile
+import shutil
+import StringIO
 
 import requests
 
@@ -22,7 +26,9 @@ TEMPLATE_FOLDER = 'recipe_templates'
 RECIPE_FOLDER = 'recipes'
 ALL_PLATFORMS = ['osx-64', 'linux-64', 'linux-32', 'win-32', 'win-64']
 
-CONDA_FORGE_RECIPE_BASE = 'https://raw.githubusercontent.com/conda-forge/{}-feedstock/master/recipe/meta.yaml'
+CONDA_FORGE_FEEDSTOCK_TARBALL = ('https://github.com/conda-forge/{}-feedstock'
+                                 '/archive/master.tar.gz')
+
 
 def get_pypi_info(name):
     client = xmlrpclib.ServerProxy(PYPI_XMLRPC)
@@ -363,6 +369,34 @@ def generate_skeleton(package, path):
                 **additional_arguments)
 
 
+def get_conda_forge_recipe(package):
+    """
+    Get recipe from conda-forge and move it to the appropriate directory.
+    """
+    feedstock_url = CONDA_FORGE_FEEDSTOCK_TARBALL.format(package.conda_name)
+    tarball_raw = requests.get(feedstock_url)
+
+    # Raise an exception if the tarball does not exist.
+    tarball_raw.raise_for_status()
+
+    tmp_dir = tempfile.mkdtemp()
+
+    tarball_stream = StringIO.StringIO(tarball_raw.content)
+
+    tarball = tarfile.open(fileobj=tarball_stream, mode='r:gz')
+    tarball.extractall(tmp_dir)
+
+    for mem in tarball.getmembers():
+        if mem.name.endswith('recipe'):
+            recipe_src_dir = os.path.join(tmp_dir, mem.name)
+            break
+
+    shutil.move(recipe_src_dir,
+                os.path.join(RECIPE_FOLDER, package.conda_name))
+
+    shutil.rmtree(tmp_dir)
+
+
 def inject_requirements(package, recipe_path):
     """
     Two packages get special treatment so that restrictions on build versions,
@@ -437,38 +471,39 @@ def main(args=None):
     # list.
     build_skeleton = []
     for p in build_not_recipe:
-        # Try grabbing the recipe from a URL
+        # Try grabbing the recipe from conda-forge
         try:
-            recipe_meta = requests.get(CONDA_FORGE_RECIPE_BASE.format(p.conda_name))
-            recipe_meta.raise_for_status()
+            get_conda_forge_recipe(p)
         except requests.HTTPError:
             build_skeleton.append(p)
             continue
 
-        print("Pulling recipe from conda-forge for {}".format(p.conda_name))
-        recipe_meta = recipe_meta.text
+        recipe_path = os.path.join(RECIPE_FOLDER, p.conda_name)
+        meta_path = os.path.join(recipe_path, 'meta.yaml')
+        print("Pulled recipe from conda-forge for {}".format(p.conda_name))
+        with open(meta_path) as f:
+            recipe_meta = f.read()
 
         # Check the version number of the recipe and perhaps modify it
         version_from_recipe = re.search('version = "(.*)"', recipe_meta)
         if not version_from_recipe:
-            # Try looking for the recipe in the yaml instead of the jinja template.
-            version_from_recipe = re.search('^\s+version: (\d.*)$', recipe_meta)
-            print(recipe_meta)
+            # Try looking for the recipe in the yaml instead of
+            # a jinja variable.
+            version_from_recipe = re.search('^\s+version: (\d.*)$',
+                                            recipe_meta)
 
         version_from_recipe = version_from_recipe.group(1)
 
         print("recipe version: {}\nrequirements version: {}".format(version_from_recipe, p.required_version))
-        assert p.required_version == version_from_recipe
+        if p.required_version:
+            assert p.required_version == version_from_recipe
 
         # render the recipe
         # The environ below is for the emcee recipe.
         rendered = Template(recipe_meta).render(environ=os.environ)
         # write the recipe
-        recipe_path = os.path.join(RECIPE_FOLDER, p.conda_name)
 
-
-        os.mkdir(recipe_path)
-        with open(os.path.join(recipe_path, 'meta.yaml'), 'w') as f:
+        with open(meta_path, 'w') as f:
             f.writelines(rendered)
 
         # inject requirements
@@ -481,6 +516,7 @@ def main(args=None):
         generate_skeleton(p, RECIPE_FOLDER)
 
         inject_requirements(p, recipe_destination)
+
 
 if __name__ == '__main__':
     main()
