@@ -17,7 +17,7 @@ requirements:
         - python
         - setuptools
         - conda
-        - conda-build 2.0*
+        - conda-build >=2.1
         - anaconda-client
         - six
         - ruamel.yaml
