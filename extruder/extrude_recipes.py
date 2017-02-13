@@ -381,7 +381,7 @@ def get_conda_forge_recipe(package):
 
     tmp_dir = tempfile.mkdtemp()
 
-    tarball_stream = StringIO.StringIO(tarball_raw.content)
+    tarball_stream = StringIO.StringIO(str(tarball_raw.content))
 
     tarball = tarfile.open(fileobj=tarball_stream, mode='r:gz')
     tarball.extractall(tmp_dir)
