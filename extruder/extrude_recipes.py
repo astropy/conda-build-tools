@@ -498,16 +498,6 @@ def main(args=None):
         if p.required_version:
             assert p.required_version == version_from_recipe
 
-        # render the recipe
-        # The environ below is for the emcee recipe.
-        rendered = Template(recipe_meta).render(environ=os.environ)
-        # write the recipe
-
-        with open(meta_path, 'w') as f:
-            f.writelines(rendered)
-
-        # inject requirements
-        inject_requirements(p, recipe_path)
 
     # Use conda skeleton to generate recipes for the simple cases
     for p in build_skeleton:
