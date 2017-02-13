@@ -55,7 +55,7 @@ class Package(object):
     """
 
     # The class should only need one client for communicating with PyPI
-    client = xmlrpclib.ServerProxy(PYPI_XMLRPC)
+    client = xmlrpclib.ServerProxy(PYPI_XMLRPC, allow_none=True)
 
     def __init__(self, pypi_name, version=None,
                  numpy_compiled_extensions=False,
