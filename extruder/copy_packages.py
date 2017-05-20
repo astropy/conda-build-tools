@@ -58,7 +58,6 @@ class PackageCopier(object):
                 pinned_version = VersionOrder(version)
             else:
                 pinned_version = None
-            print(str(pinned_version))
             if pinned_version is not None:
                 if str(pinned_version) not in cf['versions']:
                     error_message = ('Version {} of package {} not '
@@ -71,8 +70,6 @@ class PackageCopier(object):
             except NotFound:
                 need_to_copy = True
                 ap_version = None
-                print('pkg {} does not exist on destination '
-                      'channel'.format(p))
             else:
                 ap_version = VersionOrder(ap['latest_version'])
                 if pinned_version is None:
@@ -83,8 +80,7 @@ class PackageCopier(object):
                         need_to_copy = True
             if need_to_copy:
                 copy_versions[p] = str(cf_version)
-            elif cf_version == ap_version:
-                print('Nothing to do for {}'.format(p))
+
         return copy_versions
 
     def copy_packages(self):
