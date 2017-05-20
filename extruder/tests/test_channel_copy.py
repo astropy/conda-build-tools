@@ -1,5 +1,7 @@
 import pytest
 
+from os import getenv
+
 from binstar_client.utils import get_server_api
 from binstar_client.errors import NotFound
 
@@ -71,10 +73,12 @@ def test_version_not_pinned_no_update_needed():
     assert 'sep' not in pc.to_copy
 
 
+token = getenv('COPY_TEST_BINSTAR_TOKEN')
+
+
+@pytest.mark.skipif(token is None,
+                    reason='binstar token not set')
 def test_package_copying():
-    from os import getenv
-    token = getenv('COPY_TEST_BINSTAR_TOKEN')
-    print(token)
     api = get_server_api(token)
     packages = {'wcsaxes': None}
     pc = PackageCopier(SOURCE, DEST, packages, token=token)
