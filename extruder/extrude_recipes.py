@@ -4,17 +4,13 @@ from __future__ import (division, print_function, absolute_import)
 from argparse import ArgumentParser
 import os
 import re
-import tarfile
-import tempfile
-import shutil
-import io
-
-import requests
 
 from ruamel import yaml
 
 from conda import config
 from conda_build.api import skeletonize
+from binstar_client.utils import get_server_api
+from binstar_client.errors import NotFound
 
 from six.moves import xmlrpc_client as xmlrpclib
 
@@ -369,32 +365,20 @@ def generate_skeleton(package, path):
                 **additional_arguments)
 
 
-def get_conda_forge_recipe(package):
+def get_conda_forge_version(package):
     """
-    Get recipe from conda-forge and move it to the appropriate directory.
+    Check whether we can copy version we want from conda-forge.
     """
-    feedstock_url = CONDA_FORGE_FEEDSTOCK_TARBALL.format(package.conda_name)
-    tarball_raw = requests.get(feedstock_url)
+    api = get_server_api('')
 
-    # Raise an exception if the tarball does not exist.
-    tarball_raw.raise_for_status()
+    # A NotFound error will be raised if the package is not found.
+    conda_forge = api.package('conda-forge', package.conda_name)
 
-    tmp_dir = tempfile.mkdtemp()
-
-    tarball_stream = io.BytesIO(tarball_raw.content)
-
-    tarball = tarfile.open(fileobj=tarball_stream, mode='r:gz')
-    tarball.extractall(tmp_dir)
-
-    for mem in tarball.getmembers():
-        if mem.name.endswith('recipe'):
-            recipe_src_dir = os.path.join(tmp_dir, mem.name)
-            break
-
-    shutil.move(recipe_src_dir,
-                os.path.join(RECIPE_FOLDER, package.conda_name))
-
-    shutil.rmtree(tmp_dir)
+    if package.required_version:
+        return package.required_version in conda_forge.versions
+    else:
+        # No version was specified, so assume the latest is good enough.
+        return True
 
 
 def inject_requirements(package, recipe_path):
@@ -474,32 +458,18 @@ def main(args=None):
     for p in build_not_recipe:
         # Try grabbing the recipe from conda-forge
         try:
-            get_conda_forge_recipe(p)
-        except requests.HTTPError:
+            in_conda_forge = get_conda_forge_version(p)
+        except NotFound:
             build_skeleton.append(p)
             continue
+        else:
+            if not in_conda_forge:
+                build_skeleton.append(p)
+                continue
 
         copy_from_conda_forge[p.conda_name] = p.required_version
-        print("Will copy {} directly from the conda-forge channel".format(p.conda_name))
-        # recipe_path = os.path.join(RECIPE_FOLDER, p.conda_name)
-        # meta_path = os.path.join(recipe_path, 'meta.yaml')
-        # print("Pulled recipe from conda-forge for {}".format(p.conda_name))
-        # with open(meta_path) as f:
-        #     recipe_meta = f.read()
-
-        # # Check the version number of the recipe and perhaps modify it
-        # version_from_recipe = re.search('version = "(.*)"', recipe_meta)
-        # if not version_from_recipe:
-        #     # Try looking for the recipe in the yaml instead of
-        #     # a jinja variable.
-        #     version_from_recipe = re.search('^\s+version: (\d.*)$',
-        #                                     recipe_meta)
-
-        # version_from_recipe = version_from_recipe.group(1)
-
-        # print("recipe version: {}\nrequirements version: {}".format(version_from_recipe, p.required_version))
-        # if p.required_version:
-        #     assert p.required_version == version_from_recipe
+        print("Will copy {} directly from the "
+              "conda-forge channel".format(p.conda_name))
 
     if copy_from_conda_forge:
         with open('copy_from.yaml', 'w') as f:

@@ -82,11 +82,20 @@ def test_package_copying():
     api = get_server_api(token)
     packages = {'wcsaxes': None}
     pc = PackageCopier(SOURCE, DEST, packages, token=token)
+
+    # Make sure v0.9 has not accidentally ended up in the channel.
     dest_wcs = api.package(DEST, 'wcsaxes')
     assert "0.9" not in dest_wcs['versions']
+
+    # Copy 0.9 to the channel.
     pc.copy_packages()
+
+    # Make sure it is really there.
     dest_wcs = api.package(DEST, 'wcsaxes')
     assert "0.9" in dest_wcs['versions']
+
+    # Remove it...
     api.remove_release(DEST, 'wcsaxes', "0.9")
+    # ...and make sure it is really gone.
     dest_wcs = api.package(DEST, 'wcsaxes')
     assert "0.9" not in dest_wcs['versions']
