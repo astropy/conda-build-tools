@@ -28,7 +28,7 @@ install:
     - conda update --quiet conda
 
     # Install a couple of dependencies we need for sure.
-    - conda install --quiet --yes jinja2 conda-build=2.0* ruamel.yaml pytest
+    - conda install --quiet --yes jinja2 conda-build=2* ruamel.yaml pytest
 
 script:
     # Not much of a real test yet, just try to build myself...
