@@ -470,6 +470,7 @@ def main(args=None):
     # check conda-forge for a recipe, and if it is not found, add to the skeleton
     # list.
     build_skeleton = []
+    copy_from_conda_forge = {}
     for p in build_not_recipe:
         # Try grabbing the recipe from conda-forge
         try:
@@ -478,26 +479,31 @@ def main(args=None):
             build_skeleton.append(p)
             continue
 
-        recipe_path = os.path.join(RECIPE_FOLDER, p.conda_name)
-        meta_path = os.path.join(recipe_path, 'meta.yaml')
-        print("Pulled recipe from conda-forge for {}".format(p.conda_name))
-        with open(meta_path) as f:
-            recipe_meta = f.read()
+        copy_from_conda_forge[p.conda_name] = p.required_version
+        print("Will copy {} directly from the conda-forge channel".format(p.conda_name))
+        # recipe_path = os.path.join(RECIPE_FOLDER, p.conda_name)
+        # meta_path = os.path.join(recipe_path, 'meta.yaml')
+        # print("Pulled recipe from conda-forge for {}".format(p.conda_name))
+        # with open(meta_path) as f:
+        #     recipe_meta = f.read()
 
-        # Check the version number of the recipe and perhaps modify it
-        version_from_recipe = re.search('version = "(.*)"', recipe_meta)
-        if not version_from_recipe:
-            # Try looking for the recipe in the yaml instead of
-            # a jinja variable.
-            version_from_recipe = re.search('^\s+version: (\d.*)$',
-                                            recipe_meta)
+        # # Check the version number of the recipe and perhaps modify it
+        # version_from_recipe = re.search('version = "(.*)"', recipe_meta)
+        # if not version_from_recipe:
+        #     # Try looking for the recipe in the yaml instead of
+        #     # a jinja variable.
+        #     version_from_recipe = re.search('^\s+version: (\d.*)$',
+        #                                     recipe_meta)
 
-        version_from_recipe = version_from_recipe.group(1)
+        # version_from_recipe = version_from_recipe.group(1)
 
-        print("recipe version: {}\nrequirements version: {}".format(version_from_recipe, p.required_version))
-        if p.required_version:
-            assert p.required_version == version_from_recipe
+        # print("recipe version: {}\nrequirements version: {}".format(version_from_recipe, p.required_version))
+        # if p.required_version:
+        #     assert p.required_version == version_from_recipe
 
+    if copy_from_conda_forge:
+        with open('copy_from.yaml', 'w') as f:
+            yaml.dump(copy_from_conda_forge, f)
 
     # Use conda skeleton to generate recipes for the simple cases
     for p in build_skeleton:
