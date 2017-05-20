@@ -375,7 +375,7 @@ def get_conda_forge_version(package):
     conda_forge = api.package('conda-forge', package.conda_name)
 
     if package.required_version:
-        return package.required_version in conda_forge.versions
+        return package.required_version in conda_forge["versions"]
     else:
         # No version was specified, so assume the latest is good enough.
         return True
