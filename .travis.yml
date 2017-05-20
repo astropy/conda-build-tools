@@ -8,12 +8,13 @@ env:
     global:
         - TARGET_ARCH="x64"
         - secure: "sb1XMByfDQH7dgEYpb4VQHVro4Djh2nldeUY8SWKp7cRK6CEVDFf2KC1psTvyG9F2eiDF6NROTesIgXUr7XVhGNv5wMQP+R7DAUZzpm7tH+sN3bfdecDTkfIS/SR6Lyd4KrsPP11DmFp+jPDRtkGN6+zmYzLvM+GXRuGJq7bf6D1ObtVf4VxCdpfhD8c0fkfTUrN/pSvESXe2/GTKpUXUIwV5L/eGedpuocds/0UBbb0DyMc9x3IGTP1eSnV65e8PngnPVjvmm+fPSwmjucMSOkhXFgHw4LgwdTQFo43qQ54PkEUG0JWW/vr2vTeSFm18hyaMaorTedA7yptlNJgBKWQMEqmqXNkNsfzaRqJXLJHbctl5wi8h4XXGWTxwX9yhWbXe5L57Mli9+/wRA9EpHmPrFNQld3KK1LSaLBY/oEPnCZz7tUVj90XRQXq3R6W5fksUX+gvbQdLrmrmVMRSK+eqBNweXBniKX4cTeFeTxPH4mxsSET14uXCdowjOtCVx+0IIu4LVOgZLNe8YqazG8zMayumiwIDKG/cESCOQCXncEg5anyQVDuJFukZqfJq6X8VqdLzvjvO8o6GTM7PK1PQHY21HnKdJqL/az6V2xgBLZb7iXc1JzeFMx+DJi66XiuFiD7c0Ggg7ZliNDMi2Ib79MmJz1LEp3xdLX3yzo="
+        - secure: "FgCNJXjx+M9Q0DXbWG4RK5L5/Z+PLWswyaK933IOxppKs5rU+2bUut7y8Dq9ftol3d0hIMnfAtwCPqQ9jkNNz3KKcV96idx1hQrRxzlBkF8T5XSeaR7WJ3+T+thNSVU+wxhO9TM0JU+jhM396/JA+IhWSnINQ6PqFxBaOP/FHvALK+o1YY6w5DAIiOfrg28w7aZZZAuCDSKfrBK9g/WuHMrop14kL4Ovo02Awu4o0aozgepG+HK6uxXinorpUoO5XTENbux+xNvCzF2JWE/yzBEl8ICEMQV+WG/9GKc8tB9aZQIE5YXMH3/oEffytwApAjMFOEmOqoApPjSzkdBFHlCYoSzYeo4IaVkv1CZmIjWivQ8F4wN4xk7t5AAZEkdKiRZAY0qSlE8bYzUJ8zBwilIFv7nlw/jNUjOlKIPisXNN29jqmCrL1NxWo2URWzDsgFwZzny1TLrspQqaGGX1KQ0X+WzHLAJVCYurEhyAuvcNzwfwv4qjyzD9LJ1c4efHj5Qit2ICxBMH0Jmg/qEcT/g2b1nHXo4b0m7Ntu3XcrKgdQKb4BtfXxAaghO3jIRGI7JZrskn3F5psPzhtoe9azj+OjqTPoBeLAT611nW8jF2mPjel+IAGWrBNtdm++VFBSfvB+zm6rUgv/prCIyv44mWqz1yTXMFwywKOpXOdMg="
         - CONDA_INSTALL_LOCN="${HOME}/miniconda"
 
 install:
     # Install and set up miniconda.
-    - if [ $TRAVIS_OS_NAME == "linux" ]; then wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh; fi
-    - if [ $TRAVIS_OS_NAME == "osx" ]; then wget http://repo.continuum.io/miniconda/Miniconda-latest-MacOSX-x86_64.sh -O miniconda.sh; fi
+    - if [ $TRAVIS_OS_NAME == "linux" ]; then wget http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh; fi
+    - if [ $TRAVIS_OS_NAME == "osx" ]; then wget http://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -O miniconda.sh; fi
     - bash miniconda.sh -b -p $CONDA_INSTALL_LOCN
     - export PATH=${CONDA_INSTALL_LOCN}/bin:$PATH
     - conda config --set always_yes true
@@ -27,11 +28,13 @@ install:
     - conda update --quiet conda
 
     # Install a couple of dependencies we need for sure.
-    - conda install --quiet --yes jinja2 conda-build=2.0* ruamel.yaml
+    - conda install --quiet --yes jinja2 conda-build=2* ruamel.yaml pytest
 
 script:
     # Not much of a real test yet, just try to build myself...
     - conda build extruder.recipe
+    # Only run the tests on linux, since those are much faster than the osx machines.
+    - if [ $TRAVIS_OS_NAME == "linux" ]; then py.test; fi
 
 after_success:
     - echo $TRAVIS_TAG
