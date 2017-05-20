@@ -1,5 +1,10 @@
 from __future__ import print_function
 
+from argparse import ArgumentParser
+import os
+
+from ruamel import yaml
+
 from binstar_client.utils import get_server_api
 from binstar_client.errors import NotFound
 
@@ -58,6 +63,7 @@ class PackageCopier(object):
                 pinned_version = VersionOrder(version)
             else:
                 pinned_version = None
+
             if pinned_version is not None:
                 if str(pinned_version) not in cf['versions']:
                     error_message = ('Version {} of package {} not '
@@ -65,6 +71,7 @@ class PackageCopier(object):
                     err = error_message.format(pinned_version, p,
                                                self.source)
                     raise RuntimeError(err)
+
             try:
                 ap = self.api.package(self.destination, p)
             except NotFound:
@@ -87,6 +94,50 @@ class PackageCopier(object):
         """
         Actually do the copying of the packages.
         """
-        print(self.api.token)
         for p, v in self.to_copy.items():
             self.api.copy(self.source, p, v, to_owner=self.destination)
+
+
+def main(arguments=None):
+    parser = ArgumentParser('Simple script for copying packages '
+                            'from one conda owner to another')
+    parser.add_argument('packages_yaml',
+                        help=('Packages to copy, as a yaml dictionary. '
+                              'Keys are package names, values are version, '
+                              'or None for the latest version from '
+                              'the source.'))
+    parser.add_argument('--source', default='conda-forge',
+                        help='Source conda channel owner.')
+    parser.add_argument('--token', default='',
+                        help=('anaconda.org API token. May set '
+                              'environmental variable BINSTAR_TOKEN '
+                              'instead.'))
+    parser.add_argument('destination_channel',
+                        help=('Destination conda channel owner.'))
+    if arguments is None:
+        args = parser.parse_args()
+    else:
+        args = parser.parse_args(arguments)
+
+    source = args.source
+    dest = args.destination_channel
+    package_file = args.packages_yaml
+    token = args.token
+
+    with open(package_file) as f:
+        packages = yaml.load(f)
+
+    # No token on command line, try the environment...
+    if not token:
+        token = os.getenv('BINSTAR_TOKEN')
+
+    # Still no token, so raise an error
+    if not token:
+        raise RuntimeError('Set an anaconda.org API token before running')
+
+    pc = PackageCopier(source, dest, packages, token=token)
+    pc.copy_packages()
+
+
+if __name__ == '__main__':
+    main()
