@@ -139,7 +139,8 @@ class Package(object):
 
     @property
     def is_dev(self):
-        return not (re.search('[a-zA-Z]', self.required_version) is None)
+        # Be more explicit about dev and pre-release versions
+        return not (re.search('a|b|rc|dev', self.required_version) is None)
 
     @property
     def url(self):
