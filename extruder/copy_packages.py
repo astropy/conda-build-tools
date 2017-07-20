@@ -98,10 +98,11 @@ class PackageCopier(object):
                     # If we get here it means that the same version is on both
                     # source and destination so we need to check the individual
                     # builds.
+                    check_version = pinned_version or cf_version
                     copy_builds = \
                         self._check_for_missing_builds(cf,
                                                        ap,
-                                                       cf_version)
+                                                       check_version)
                     need_to_copy = len(copy_builds) > 0
             if need_to_copy:
                 copy_versions[p] = (str(cf_version), copy_builds)
