@@ -138,7 +138,7 @@ class PackageCopier(object):
             version, buildnames = v
             if not buildnames:
                 # Copy all of the builds for this version
-                self.api.copy(self.source, p, v, to_owner=self.destination)
+                self.api.copy(self.source, p, version, to_owner=self.destination)
             else:
                 for build in buildnames:
                     self.api.copy(self.source, p, version,
