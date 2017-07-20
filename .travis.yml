@@ -25,7 +25,7 @@ install:
     # Need this for astropy-helpers
     - conda config --add channels astropy
     # For ruamel.yaml
-    - conda config --add channels conda-forge
+    - conda config --append channels conda-forge
     - conda install astropy-helpers anaconda-client
 
     - conda update --quiet conda
