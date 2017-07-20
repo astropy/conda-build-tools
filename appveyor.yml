@@ -50,7 +50,7 @@ install:
 
     # Add for ruamel.yaml
     - cmd: conda config --add channels conda-forge
-    - cmd: conda install --quiet jinja2 conda-build=2.0* anaconda-client ruamel.yaml
+    - cmd: conda install --quiet jinja2 conda-build=2 anaconda-client ruamel.yaml
     # These installs are needed on windows but not other platforms.
     - cmd: conda install patch psutil
 
