@@ -14,7 +14,7 @@ from binstar_client.errors import NotFound
 
 from six.moves import xmlrpc_client as xmlrpclib
 
-from jinja2 import Environment, FileSystemLoader, Template
+from jinja2 import Environment, FileSystemLoader
 from jinja2.exceptions import TemplateNotFound
 
 PYPI_XMLRPC = 'https://pypi.python.org/pypi'
@@ -419,8 +419,13 @@ def main(args=None):
         parser.add_argument('--template-dir', default=TEMPLATE_FOLDER,
                             help="Path the folder of recipe templates, if "
                                  "any. Default: '{}'".format(TEMPLATE_FOLDER))
+        parser.add_argument('--dont_copy_conda_forge', action='store_true',
+                            default=False, dest='dont_copy_conda_forge',
+                            help="Do not copy packages from conda-forge. "
+                                 "Default is False.")
         args = parser.parse_args()
         template_dir = args.template_dir
+        dont_copy_conda_forge = args.dont_copy_conda_forge
 
     packages = get_package_versions(args.requirements)
 
@@ -458,7 +463,10 @@ def main(args=None):
     for p in build_not_recipe:
         # Try grabbing the recipe from conda-forge
         try:
-            in_conda_forge = get_conda_forge_version(p)
+            if dont_copy_conda_forge:
+                in_conda_forge = False
+            else:
+                in_conda_forge = get_conda_forge_version(p)
         except NotFound:
             build_skeleton.append(p)
             continue
