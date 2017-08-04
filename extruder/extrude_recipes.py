@@ -419,7 +419,7 @@ def main(args=None):
         parser.add_argument('--template-dir', default=TEMPLATE_FOLDER,
                             help="Path the folder of recipe templates, if "
                                  "any. Default: '{}'".format(TEMPLATE_FOLDER))
-        parser.add_argument('--dont_copy_conda_forge', action='store_true',
+        parser.add_argument('--dont-copy-conda-forge', action='store_true',
                             default=False, dest='dont_copy_conda_forge',
                             help="Do not copy packages from conda-forge. "
                                  "Default is False.")
