@@ -26,6 +26,8 @@ requirements:
         - six
         - ruamel.yaml
         - ruamel.ordereddict   # [py26]
+        - github3.py
+        - gitpython
 
 test:
   imports:
