@@ -25,7 +25,6 @@ requirements:
         - anaconda-client
         - six
         - ruamel.yaml
-        - ruamel.ordereddict   # [py26]
         - github3.py
         - gitpython
 
@@ -35,6 +34,8 @@ test:
   commands:
     - extrude_template --help
     - extrude_recipes --help
+    - copy_packages --help
+    - conda_forge_feedstock_cloner --help
 
 about:
   license: BSD-3
