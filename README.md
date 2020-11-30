@@ -1,3 +1,8 @@
+# ARCHIVED
+
+This repository has been archived, as it has been replaced by conda-forge implemenations
+
+
 # extruder
 
 This is a pair of scripts to create and manage a set of packages to be built
